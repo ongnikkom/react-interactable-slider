@@ -1,0 +1,15 @@
+.container {
+  display: inline-block;
+
+  label > input {
+    margin-right: 10px;
+  }
+
+  &--stacked {
+    display: block;
+  }
+
+  &--last {
+    margin-left: 10px;
+  }
+}

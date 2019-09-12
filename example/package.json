@@ -1,0 +1,31 @@
+{
+  "name": "react-interactable-slider-example",
+  "version": "1.0.0",
+  "description": "A demo version of React Interactable Slider plugin",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server  --hot--mode development",
+    "build": "webpack --mode production"
+  },
+  "author": "Nikko Ong",
+  "license": "MIT",
+  "dependencies": {
+    "react": "file../node_modules/react",
+    "react-dom": "file../node_modules/react-dom"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.6.0",
+    "@babel/core": "^7.6.0",
+    "@babel/plugin-external-helpers": "^7.2.0",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
+    "@babel/plugin-transform-react-jsx": "^7.3.0",
+    "@babel/preset-env": "^7.6.0",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.6",
+    "html-webpack-plugin": "^3.2.0",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.8",
+    "webpack-dev-server": "^3.8.0"
+  }
+}

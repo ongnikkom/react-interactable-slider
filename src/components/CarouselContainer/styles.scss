@@ -1,0 +1,51 @@
+.container {
+  direction: ltr;
+
+  position: relative;
+  box-sizing: border-box;
+  margin: 0 auto;
+
+  &--debug {
+    border: 1px dotted #ddd;
+  }
+
+  &-inner {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+
+    &--left {
+      justify-content: flex-end;
+
+      > div:first-child:before {
+        right: 0;
+      }
+    }
+
+    &--right {
+      justify-content: flex-start;
+
+      > div:first-child:before {
+        left: 0;
+      }
+    }
+
+    &--indicator > div:first-child:before {
+      background-color: yellow;
+    }
+
+    > div:first-child {
+      flex: auto;
+
+      &:before {
+        content: '';
+        width: 2px;
+        height: 100%;
+        position: absolute;
+        top: 0;
+      }
+    }
+  }
+}
