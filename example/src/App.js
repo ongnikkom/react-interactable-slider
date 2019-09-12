@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ReactInteractableSlider from '../../dist';
 
 const style = {
-  border: '1px solid #ddd',
+  border: '1px solid #323031',
   height: 300
 };
 

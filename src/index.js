@@ -10,15 +10,15 @@ import Interactable from 'react-interactable/noNative';
  * Hooks
  */
 import usePreventDragOnTagNames from './hooks/usePreventDragOnTagNames';
-import useCarousel from './hooks/useCarousel';
+import useSlider from './hooks/useSlider';
 import useSlides from './hooks/useSlides';
 
 /**
  * Components
  */
-import CarouselContainer from './components/CarouselContainer';
-import CarouselSnapPointDebugger from './components/CarouselSnapPointDebugger';
-import CarouselDebugger from './components/CarouselDebugger';
+import Container from './components/Container';
+import SnapPointDebugger from './components/SnapPointDebugger';
+import Debugger from './components/Debugger';
 
 ReactInteractableSlider.propTypes = {
   cellAlign: PropTypes.oneOf(['left', 'right']),
@@ -50,22 +50,22 @@ function ReactInteractableSlider(props) {
   usePreventDragOnTagNames(['a', 'img']);
 
   // Convert and setup state from props
-  const [carouselState, setCarouselState, render] = useCarousel(interactableRef, props, children);
+  const [sliderState, setSliderState, render] = useSlider(interactableRef, props, children);
 
   // Get needed state here
-  const { dragEnabled, snapPoints } = carouselState;
+  const { dragEnabled, snapPoints } = sliderState;
 
   // Do calculation for slides
-  useSlides(carouselState, setCarouselState);
+  useSlides(sliderState, setSliderState);
 
   const onSnap = useCallback(
-    snapPoint => setCarouselState({ currentSnapPoint: snapPoint.index }),
+    snapPoint => setSliderState({ currentSnapPoint: snapPoint.index }),
     []
   );
 
   return (
     <>
-      <CarouselContainer {...{ ...carouselState, setCarouselState }}>
+      <Container {...{ ...sliderState, setSliderState }}>
         <Interactable.View
           horizontalOnly
           dragEnabled={dragEnabled}
@@ -75,9 +75,9 @@ function ReactInteractableSlider(props) {
         >
           {render(children)}
         </Interactable.View>
-        <CarouselSnapPointDebugger {...{ ...carouselState }} />
-      </CarouselContainer>
-      <CarouselDebugger {...{ ...carouselState, setCarouselState }} />
+        <SnapPointDebugger {...{ ...sliderState }} />
+      </Container>
+      <Debugger {...{ ...sliderState, setSliderState }} />
     </>
   );
 }

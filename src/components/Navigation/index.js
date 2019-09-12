@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { arrow, dotsContainer, dot } from './styles';
 
-function CarouselNavigation({ cellAlign, currentSnapPoint, navigationType, snapPoints, view }) {
+function Navigation({ cellAlign, currentSnapPoint, navigationType, snapPoints, view }) {
   const isLeft = cellAlign === 'left';
 
   const renderArrows = useCallback(() => {
@@ -18,18 +18,18 @@ function CarouselNavigation({ cellAlign, currentSnapPoint, navigationType, snapP
     return (
       <>
         <div
-          className={arrow('left')}
+          className={arrow('left', navigationType === 'both')}
           onClick={isLeft ? navLeft : navRight}
           disabled={isLeft ? leftDisabled : rightDisabled}
         />
         <div
-          className={arrow('right')}
+          className={arrow('right', navigationType === 'both')}
           onClick={isLeft ? navRight : navLeft}
           disabled={isLeft ? rightDisabled : leftDisabled}
         />
       </>
     );
-  }, [currentSnapPoint, snapPoints]);
+  }, [currentSnapPoint, navigationType, snapPoints]);
 
   const renderDots = useCallback(() => {
     const selectedDot = isLeft ? snapPoints.length - currentSnapPoint - 1 : currentSnapPoint;
@@ -67,4 +67,4 @@ function CarouselNavigation({ cellAlign, currentSnapPoint, navigationType, snapP
   }
 }
 
-export default CarouselNavigation;
+export default Navigation;

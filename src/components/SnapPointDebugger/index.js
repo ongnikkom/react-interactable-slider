@@ -1,7 +1,7 @@
 import React from 'react';
 import { container, point } from './styles';
 
-function CarouselSnapPointDebugger({ snapPoints = [], debug }) {
+function SnapPointDebugger({ snapPoints = [], debug }) {
   if (snapPoints.length < 1 || !debug) return null;
 
   return (
@@ -13,4 +13,4 @@ function CarouselSnapPointDebugger({ snapPoints = [], debug }) {
   );
 }
 
-export default CarouselSnapPointDebugger;
+export default SnapPointDebugger;

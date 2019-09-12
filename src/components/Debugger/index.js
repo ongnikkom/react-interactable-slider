@@ -23,26 +23,25 @@ function onChangeNumber(handler, key) {
   };
 }
 
-function CarouselDebugger({
-  carouselWidth,
+function Debugger({
   cellAlign,
   debug,
   dragEnabled,
   fullWidthPerSlide,
   marginGapsPerSlide,
   navigationType,
-  overflowHidden,
   responsive,
+  sliderWidth,
   snapPoints,
   widthPerSlide,
-  setCarouselState
+  setSliderState
 }) {
   if (!debug) return null;
 
   const [formNamePrefix, setFormNamePrefix] = useState();
 
   useEffect(() => {
-    setFormNamePrefix(useId('carousel'));
+    setFormNamePrefix(useId('slider'));
   }, []);
 
   const onChangeMarginGaps = useCallback(
@@ -50,10 +49,10 @@ function CarouselDebugger({
       const val = parseInt(value);
       const totalWidth = val + widthPerSlide;
 
-      if (totalWidth <= carouselWidth) {
-        setCarouselState({ marginGapsPerSlide: val });
+      if (totalWidth <= sliderWidth) {
+        setSliderState({ marginGapsPerSlide: val });
       } else {
-        setCarouselState({ marginGapsPerSlide: carouselWidth - widthPerSlide });
+        setSliderState({ marginGapsPerSlide: sliderWidth - widthPerSlide });
       }
     },
     [widthPerSlide, marginGapsPerSlide]
@@ -63,10 +62,10 @@ function CarouselDebugger({
     ({ target: { value } }) => {
       const val = parseInt(value);
 
-      if (val <= carouselWidth) {
-        setCarouselState({ widthPerSlide: val });
+      if (val <= sliderWidth) {
+        setSliderState({ widthPerSlide: val });
       } else {
-        setCarouselState({ marginGapsPerSlide: 0, widthPerSlide: carouselWidth });
+        setSliderState({ marginGapsPerSlide: 0, widthPerSlide: sliderWidth });
       }
     },
     [widthPerSlide, marginGapsPerSlide]
@@ -77,23 +76,11 @@ function CarouselDebugger({
       <h1>Debugger</h1>
 
       <div className={formGroup}>
-        <p>Overflow</p>
-        <RadioGroup
-          name={`${formNamePrefix}-overflow`}
-          value={overflowHidden.toString()}
-          onChange={onChange(setCarouselState, 'overflowHidden', true)}
-        >
-          <RadioOption label="Visible" value="true" />
-          <RadioOption label="Hidden" value="false" />
-        </RadioGroup>
-      </div>
-
-      <div className={formGroup}>
         <p>Cell Align</p>
         <RadioGroup
           name={`${formNamePrefix}-cell-align`}
           value={cellAlign}
-          onChange={onChange(setCarouselState, 'cellAlign')}
+          onChange={onChange(setSliderState, 'cellAlign')}
         >
           <RadioOption label="Left" value="left" />
           <RadioOption label="Right" value="right" />
@@ -106,7 +93,7 @@ function CarouselDebugger({
           <RadioGroup
             name={`${formNamePrefix}-nav-type`}
             value={navigationType}
-            onChange={onChange(setCarouselState, 'navigationType')}
+            onChange={onChange(setSliderState, 'navigationType')}
           >
             <RadioOption label="Arrows" value="arrows" />
             &nbsp;&nbsp;
@@ -123,7 +110,7 @@ function CarouselDebugger({
         <RadioGroup
           name={`${formNamePrefix}-draggable`}
           value={dragEnabled.toString()}
-          onChange={onChange(setCarouselState, 'dragEnabled', true)}
+          onChange={onChange(setSliderState, 'dragEnabled', true)}
         >
           <RadioOption label="True" value="true" />
           <RadioOption label="False" value="false" />
@@ -135,7 +122,7 @@ function CarouselDebugger({
         <RadioGroup
           name={`${formNamePrefix}-full-width-per-slide`}
           value={fullWidthPerSlide.toString()}
-          onChange={onChange(setCarouselState, 'fullWidthPerSlide', true)}
+          onChange={onChange(setSliderState, 'fullWidthPerSlide', true)}
         >
           <RadioOption label="True" value="true" />
           <RadioOption label="False" value="false" />
@@ -154,7 +141,7 @@ function CarouselDebugger({
           name={`${formNamePrefix}-margin-gaps-per-slide`}
           value={marginGapsPerSlide}
           onChange={onChangeMarginGaps}
-          disabled={fullWidthPerSlide || widthPerSlide === carouselWidth}
+          disabled={fullWidthPerSlide || widthPerSlide === sliderWidth}
         />
       </div>
 
@@ -169,7 +156,7 @@ function CarouselDebugger({
         <input
           type="number"
           name={`${formNamePrefix}-width-per-slide`}
-          value={widthPerSlide <= carouselWidth ? widthPerSlide : carouselWidth}
+          value={widthPerSlide <= sliderWidth ? widthPerSlide : sliderWidth}
           onChange={onChangeWidthPerSlide}
           disabled={fullWidthPerSlide}
         />
@@ -177,26 +164,26 @@ function CarouselDebugger({
 
       <div className={formGroup}>
         <p>
-          Carousel Width <br />
+          Slider Width <br />
           <small>
-            <i>Ignored if you checked responsive carousel width</i>
+            <i>Ignored if you checked responsive slider width</i>
           </small>
         </p>
         <input
           type="number"
-          name={`${formNamePrefix}-carousel-width`}
-          value={carouselWidth}
-          onChange={onChangeNumber(setCarouselState, 'carouselWidth')}
+          name={`${formNamePrefix}-slider-width`}
+          value={sliderWidth}
+          onChange={onChangeNumber(setSliderState, 'sliderWidth')}
           disabled={responsive}
         />
       </div>
 
       <div className={formGroup}>
-        <p>Responsive carousel</p>
+        <p>Responsive slider</p>
         <RadioGroup
-          name={`${formNamePrefix}-responsive-carousel`}
+          name={`${formNamePrefix}-responsive-slider`}
           value={responsive.toString()}
-          onChange={onChange(setCarouselState, 'responsive', true)}
+          onChange={onChange(setSliderState, 'responsive', true)}
         >
           <RadioOption label="True" value="true" />
           <RadioOption label="False" value="false" />
@@ -206,4 +193,4 @@ function CarouselDebugger({
   );
 }
 
-export default CarouselDebugger;
+export default Debugger;

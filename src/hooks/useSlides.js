@@ -4,27 +4,27 @@ import useLogger from './useLogger';
 /**
  * Responsible for applying the styles from state
  * and computing the snap points based on the configuration
- * @param {*} carouselState
- * @param {*} setCarouselState
+ * @param {*} sliderState
+ * @param {*} setSliderState
  */
-function useSlides(carouselState, setCarouselState) {
+function useSlides(sliderState, setSliderState) {
   const {
-    carouselWidth,
     cellAlign,
     debug,
     fullWidthPerSlide,
     marginGapsPerSlide,
+    sliderWidth,
     slides,
     view,
     widthPerSlide
-  } = carouselState;
+  } = sliderState;
 
   useEffect(() => {
     if (slides.length < 1) return;
 
     // Always parse numeric values just in case they passed a number as a string
     const parsedMarginGapsPerSlide = fullWidthPerSlide ? 0 : parseInt(marginGapsPerSlide);
-    const parsedWidthPerSlide = fullWidthPerSlide ? carouselWidth : parseInt(widthPerSlide);
+    const parsedWidthPerSlide = fullWidthPerSlide ? sliderWidth : parseInt(widthPerSlide);
 
     const marginReducer = parsedMarginGapsPerSlide * 2;
 
@@ -77,17 +77,17 @@ function useSlides(carouselState, setCarouselState) {
 
     let timer;
 
-    if (!fullWidthPerSlide && lastPoint > carouselWidth) {
-      let excessWidth = lastPoint - carouselWidth; // this will always be the last snap point
+    if (!fullWidthPerSlide && lastPoint > sliderWidth) {
+      let excessWidth = lastPoint - sliderWidth; // this will always be the last snap point
       const snapPoints = points.filter(point => excessWidth > Math.abs(point.x));
 
       excessWidth = cellAlign === 'left' ? Math.abs(excessWidth) : -Math.abs(excessWidth);
       snapPoints.push({ x: excessWidth, id: snapPoints.length });
-      setCarouselState({ snapPoints, dragEnabled: true });
+      setSliderState({ snapPoints, dragEnabled: true });
 
       timer = setTimeout(() => view.current.changePosition({ x: excessWidth, y: 0 }));
     } else if (fullWidthPerSlide) {
-      setCarouselState({ snapPoints: points.slice(0, -1), dragEnabled: true });
+      setSliderState({ snapPoints: points.slice(0, -1), dragEnabled: true });
 
       timer = setTimeout(() => {
         view.current.changePosition({
@@ -96,18 +96,18 @@ function useSlides(carouselState, setCarouselState) {
         });
       });
     } else {
-      setCarouselState({ snapPoints: [], dragEnabled: false });
+      setSliderState({ snapPoints: [], dragEnabled: false });
 
       timer = setTimeout(() => {
         view.current.changePosition({
-          x: cellAlign === 'left' ? 0 : Math.abs(lastPoint - carouselWidth),
+          x: cellAlign === 'left' ? 0 : Math.abs(lastPoint - sliderWidth),
           y: 0
         });
       });
     }
 
     return () => clearTimeout(timer);
-  }, [carouselWidth, cellAlign, fullWidthPerSlide, marginGapsPerSlide, slides, widthPerSlide]);
+  }, [sliderWidth, cellAlign, fullWidthPerSlide, marginGapsPerSlide, slides, widthPerSlide]);
 }
 
 export default useSlides;

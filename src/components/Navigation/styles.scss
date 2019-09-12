@@ -9,8 +9,6 @@
   width: 40px;
   height: 40px;
 
-  margin-top: -20px;
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -35,6 +33,10 @@
     transform: rotate(-45deg);
     vertical-align: top;
     width: 8px;
+  }
+
+  &--pull-up {
+    margin-top: -19px;
   }
 
   &-left {

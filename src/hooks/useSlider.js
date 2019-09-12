@@ -5,19 +5,18 @@ import useLogger from './useLogger';
 import SlidePort from '../components/SlidePort';
 
 const internalProps = {
-  carouselWidth: 800,
   currentSnapPoint: 0,
-  overflowHidden: false,
   responsive: true,
+  sliderWidth: 800,
   slides: [],
   snapPoints: [],
   view: null
 };
 
-function useCarousel(interactableRef, props) {
+function useSlider(interactableRef, props) {
   let slidesRef = [];
 
-  const [carouselState, setCarouselState] = useMergeState({
+  const [sliderState, setSliderState] = useMergeState({
     cellAlign: props.cellAlign,
     debug: props.debug,
     dragEnabled: props.dragEnabled,
@@ -38,13 +37,13 @@ function useCarousel(interactableRef, props) {
     navigationType,
     slides,
     widthPerSlide
-  } = carouselState;
+  } = sliderState;
 
   /**
-   * Carousel State logger
+   * Slider State logger
    */
   useEffect(() => {
-    if (debug) useLogger(carouselState, 'Carousel State');
+    if (debug) useLogger(sliderState, 'Slider State');
   }, [
     cellAlign,
     debug,
@@ -60,14 +59,14 @@ function useCarousel(interactableRef, props) {
    * Set view
    */
   useEffect(() => {
-    setCarouselState({ view: interactableRef });
+    setSliderState({ view: interactableRef });
   }, []);
 
   /**
    * Set initial slides
    */
   useEffect(() => {
-    setCarouselState({ slides: slidesRef });
+    setSliderState({ slides: slidesRef });
   }, [props.children]);
 
   /**
@@ -89,7 +88,7 @@ function useCarousel(interactableRef, props) {
     });
   }
 
-  return [carouselState, setCarouselState, render];
+  return [sliderState, setSliderState, render];
 }
 
-export default useCarousel;
+export default useSlider;

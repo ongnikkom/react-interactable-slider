@@ -6,7 +6,7 @@
   margin: 0 auto;
 
   &--debug {
-    border: 1px dotted #ddd;
+    border: 1px dashed #DB3A34;
   }
 
   &-inner {
@@ -14,7 +14,7 @@
     width: 100%;
     display: flex;
     align-items: center;
-    overflow: hidden;
+    overflow-x: hidden;
 
     &--left {
       justify-content: flex-end;
@@ -33,7 +33,7 @@
     }
 
     &--indicator > div:first-child:before {
-      background-color: yellow;
+      background-color: #FFC857;
     }
 
     > div:first-child {
