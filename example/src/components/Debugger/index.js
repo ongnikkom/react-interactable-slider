@@ -16,27 +16,18 @@ function onChange(handler, key, isBoolean = false) {
   };
 }
 
-function onChangeNumber(handler, key) {
-  return function({ target: { value } }) {
-    const val = parseInt(value);
-    if (!isNaN(val) && val > -1) handler({ [key]: value });
-  };
-}
+function Debugger({ slider }) {
+  const [config, setConfig] = slider;
 
-function Debugger({
-  cellAlign,
-  debug,
-  dragEnabled,
-  fullWidthPerSlide,
-  marginGapsPerSlide,
-  navigationType,
-  responsive,
-  sliderWidth,
-  snapPoints,
-  widthPerSlide,
-  setSliderState
-}) {
-  if (!debug) return null;
+  const {
+    cellAlign,
+    debug,
+    dragEnabled,
+    fullWidthPerSlide,
+    marginGapsPerSlide,
+    navigationType,
+    widthPerSlide
+  } = config;
 
   const [formNamePrefix, setFormNamePrefix] = useState();
 
@@ -47,13 +38,7 @@ function Debugger({
   const onChangeMarginGaps = useCallback(
     ({ target: { value } }) => {
       const val = parseInt(value);
-      const totalWidth = val + widthPerSlide;
-
-      if (totalWidth <= sliderWidth) {
-        setSliderState({ marginGapsPerSlide: val });
-      } else {
-        setSliderState({ marginGapsPerSlide: sliderWidth - widthPerSlide });
-      }
+      setConfig({ marginGapsPerSlide: val });
     },
     [widthPerSlide, marginGapsPerSlide]
   );
@@ -61,56 +46,61 @@ function Debugger({
   const onChangeWidthPerSlide = useCallback(
     ({ target: { value } }) => {
       const val = parseInt(value);
-
-      if (val <= sliderWidth) {
-        setSliderState({ widthPerSlide: val });
-      } else {
-        setSliderState({ marginGapsPerSlide: 0, widthPerSlide: sliderWidth });
-      }
+      setConfig({ widthPerSlide: val });
     },
     [widthPerSlide, marginGapsPerSlide]
   );
 
   return (
     <div className={container}>
-      <h1>Debugger</h1>
+      <h1>Playground</h1>
+
+      <div className={formGroup}>
+        <p>Debug</p>
+        <RadioGroup
+          name={`${formNamePrefix}-debug`}
+          value={debug.toString()}
+          onChange={onChange(setConfig, 'debug', true)}
+        >
+          <RadioOption label="True" value="true" />
+          <RadioOption label="False" value="false" />
+        </RadioGroup>
+      </div>
 
       <div className={formGroup}>
         <p>Cell Align</p>
         <RadioGroup
           name={`${formNamePrefix}-cell-align`}
           value={cellAlign}
-          onChange={onChange(setSliderState, 'cellAlign')}
+          onChange={onChange(setConfig, 'cellAlign')}
         >
           <RadioOption label="Left" value="left" />
           <RadioOption label="Right" value="right" />
         </RadioGroup>
       </div>
 
-      {snapPoints.length > 0 && (
-        <div className={formGroup}>
-          <p>Set navigation type</p>
-          <RadioGroup
-            name={`${formNamePrefix}-nav-type`}
-            value={navigationType}
-            onChange={onChange(setSliderState, 'navigationType')}
-          >
-            <RadioOption label="Arrows" value="arrows" />
-            &nbsp;&nbsp;
-            <RadioOption label="Both" value="both" />
-            &nbsp;&nbsp;
-            <RadioOption label="Dots" value="dots" />
-            <RadioOption label="None" value="none" />
-          </RadioGroup>
-        </div>
-      )}
+      <div className={formGroup}>
+        <p>Set navigation type</p>
+        <RadioGroup
+          name={`${formNamePrefix}-nav-type`}
+          value={navigationType}
+          onChange={onChange(setConfig, 'navigationType')}
+        >
+          <RadioOption label="Arrows" value="arrows" />
+          &nbsp;&nbsp;
+          <RadioOption label="Both" value="both" />
+          &nbsp;&nbsp;
+          <RadioOption label="Dots" value="dots" />
+          <RadioOption label="None" value="none" />
+        </RadioGroup>
+      </div>
 
       <div className={formGroup}>
         <p>Draggable</p>
         <RadioGroup
           name={`${formNamePrefix}-draggable`}
           value={dragEnabled.toString()}
-          onChange={onChange(setSliderState, 'dragEnabled', true)}
+          onChange={onChange(setConfig, 'dragEnabled', true)}
         >
           <RadioOption label="True" value="true" />
           <RadioOption label="False" value="false" />
@@ -122,7 +112,7 @@ function Debugger({
         <RadioGroup
           name={`${formNamePrefix}-full-width-per-slide`}
           value={fullWidthPerSlide.toString()}
-          onChange={onChange(setSliderState, 'fullWidthPerSlide', true)}
+          onChange={onChange(setConfig, 'fullWidthPerSlide', true)}
         >
           <RadioOption label="True" value="true" />
           <RadioOption label="False" value="false" />
@@ -141,7 +131,6 @@ function Debugger({
           name={`${formNamePrefix}-margin-gaps-per-slide`}
           value={marginGapsPerSlide}
           onChange={onChangeMarginGaps}
-          disabled={fullWidthPerSlide || widthPerSlide === sliderWidth}
         />
       </div>
 
@@ -156,38 +145,10 @@ function Debugger({
         <input
           type="number"
           name={`${formNamePrefix}-width-per-slide`}
-          value={widthPerSlide <= sliderWidth ? widthPerSlide : sliderWidth}
+          value={widthPerSlide}
           onChange={onChangeWidthPerSlide}
           disabled={fullWidthPerSlide}
         />
-      </div>
-
-      <div className={formGroup}>
-        <p>
-          Slider Width <br />
-          <small>
-            <i>Ignored if you checked responsive slider width</i>
-          </small>
-        </p>
-        <input
-          type="number"
-          name={`${formNamePrefix}-slider-width`}
-          value={sliderWidth}
-          onChange={onChangeNumber(setSliderState, 'sliderWidth')}
-          disabled={responsive}
-        />
-      </div>
-
-      <div className={formGroup}>
-        <p>Responsive slider</p>
-        <RadioGroup
-          name={`${formNamePrefix}-responsive-slider`}
-          value={responsive.toString()}
-          onChange={onChange(setSliderState, 'responsive', true)}
-        >
-          <RadioOption label="True" value="true" />
-          <RadioOption label="False" value="false" />
-        </RadioGroup>
       </div>
     </div>
   );

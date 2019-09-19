@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { container, point } from './styles';
+import Context from '../../context';
 
-function SnapPointDebugger({ snapPoints = [], debug }) {
+function SnapPointDebugger() {
+  const [state] = useContext(Context);
+  const { debug, snapPoints } = state;
+
   if (snapPoints.length < 1 || !debug) return null;
 
   return (

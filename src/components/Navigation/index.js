@@ -1,7 +1,11 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { arrow, dotsContainer, dot } from './styles';
+import Context from '../../context';
 
-function Navigation({ cellAlign, currentSnapPoint, navigationType, snapPoints, view }) {
+function Navigation() {
+  const [state] = useContext(Context);
+  const { cellAlign, currentSnapPoint, navigationType, snapPoints, view } = state;
+
   const isLeft = cellAlign === 'left';
 
   const renderArrows = useCallback(() => {

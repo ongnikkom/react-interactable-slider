@@ -4,12 +4,13 @@
   "description": "A demo version of React Interactable Slider plugin",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack-dev-server  --hot--mode development",
+    "start": "webpack-dev-server --mode development",
     "build": "webpack --mode production"
   },
   "author": "Nikko Ong",
   "license": "MIT",
   "dependencies": {
+    "classnames": "^2.2.6",
     "react": "file../node_modules/react",
     "react-dom": "file../node_modules/react-dom"
   },

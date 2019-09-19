@@ -1,23 +1,25 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { container, containerInner } from './styles';
+import Context from '../../context';
 
 import useDimensions from '../../hooks/useDimensions';
 import Navigation from '../Navigation';
 
-function Container(props) {
+function Container({ children }) {
+  const [state, setState] = useContext(Context);
+
   const {
     cellAlign,
-    children,
     debug,
+    fullWidthPerSlide,
     navigationType,
     responsive,
-    setSliderState,
     sliderWidth,
     snapPoints
-  } = props;
+  } = state;
 
-  const containerClass = useCallback(container(props), [debug]);
-  const containerInnerClass = useCallback(containerInner(props), [cellAlign, debug, snapPoints]);
+  const containerClass = useCallback(container(state), [debug]);
+  const containerInnerClass = useCallback(containerInner(state), [cellAlign, debug, snapPoints]);
 
   // Check whether slider navigation should be displayed or not
   const hasNav = navigationType !== 'none' && snapPoints.length > 0;
@@ -29,7 +31,15 @@ function Container(props) {
   useEffect(() => {
     if (Object.getOwnPropertyNames(dimensions).length < 1) return;
     const { width } = dimensions;
-    setSliderState({ sliderWidth: responsive ? width : sliderWidth });
+    const responsiveSliderWidth = responsive ? width : sliderWidth;
+    if (fullWidthPerSlide) {
+      setState({
+        sliderWidth: responsiveSliderWidth,
+        widthPerSlide: responsiveSliderWidth
+      });
+    } else {
+      setState({ sliderWidth: responsiveSliderWidth });
+    }
   }, [dimensions]);
 
   return (
@@ -39,7 +49,7 @@ function Container(props) {
       style={{ width: !responsive ? parseInt(sliderWidth) : '100%' }}
     >
       <div className={containerInnerClass}>{children}</div>
-      {hasNav && <Navigation {...props} />}
+      {hasNav && <Navigation />}
     </div>
   );
 }

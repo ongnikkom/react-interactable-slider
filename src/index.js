@@ -1,5 +1,10 @@
-import React, { useCallback, useRef } from 'react';
+import React, { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
 import PropTypes from 'prop-types';
+
+/**
+ * Contexts
+ */
+import { Provider } from './context';
 
 /**
  * Main 3rd party plugin
@@ -10,15 +15,14 @@ import Interactable from 'react-interactable/noNative';
  * Hooks
  */
 import usePreventDragOnTagNames from './hooks/usePreventDragOnTagNames';
+import usePropsToState from './hooks/usePropsToState';
 import useSlider from './hooks/useSlider';
-import useSlides from './hooks/useSlides';
 
 /**
  * Components
  */
 import Container from './components/Container';
 import SnapPointDebugger from './components/SnapPointDebugger';
-import Debugger from './components/Debugger';
 
 ReactInteractableSlider.propTypes = {
   cellAlign: PropTypes.oneOf(['left', 'right']),
@@ -50,22 +54,22 @@ function ReactInteractableSlider(props) {
   usePreventDragOnTagNames(['a', 'img']);
 
   // Convert and setup state from props
-  const [sliderState, setSliderState, render] = useSlider(interactableRef, props, children);
+  const propsToState = usePropsToState(props);
 
-  // Get needed state here
-  const { dragEnabled, snapPoints } = sliderState;
+  // Build the slider
+  const [render] = useSlider(propsToState, interactableRef);
 
-  // Do calculation for slides
-  useSlides(sliderState, setSliderState);
+  // Get required state for our Interactable.View
+  const { dragEnabled, snapPoints } = propsToState[0];
 
   const onSnap = useCallback(
-    snapPoint => setSliderState({ currentSnapPoint: snapPoint.index }),
+    snapPoint => propsToState[1]({ currentSnapPoint: snapPoint.index }),
     []
   );
 
   return (
-    <>
-      <Container {...{ ...sliderState, setSliderState }}>
+    <Provider value={propsToState}>
+      <Container>
         <Interactable.View
           horizontalOnly
           dragEnabled={dragEnabled}
@@ -75,10 +79,9 @@ function ReactInteractableSlider(props) {
         >
           {render(children)}
         </Interactable.View>
-        <SnapPointDebugger {...{ ...sliderState }} />
+        <SnapPointDebugger />
       </Container>
-      <Debugger {...{ ...sliderState, setSliderState }} />
-    </>
+    </Provider>
   );
 }
 

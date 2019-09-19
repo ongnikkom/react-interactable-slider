@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import ReactInteractableSlider from '../../dist';
+import React, { useEffect, useRef, useState } from 'react';
+import useMergeState from './hooks/useMergeState';
+
+import ReactInteractableSlider, { refresh } from '../../dist';
+import Debugger from './components/Debugger';
 
 const style = {
   border: '1px solid #323031',
@@ -7,21 +10,30 @@ const style = {
 };
 
 function App() {
-  const [slides, setSlides] = useState(Array.from(Array(10).keys()));
+  const slider = useMergeState({
+    cellAlign: 'left',
+    debug: true,
+    dragEnabled: true,
+    fullWidthPerSlide: false,
+    marginGapsPerSlide: 4,
+    navigationType: 'both',
+    widthPerSlide: 200
+  });
+
+  const [slides, setSlides] = useState(Array.from(Array(15).keys()));
+  const [count, setCount] = useState(0);
+  const ref = useRef(ref);
+
   return (
     <>
-      <button onClick={() => setSlides([...slides, slides.length])}>Add 1 slide</button>
-      <button onClick={() => setSlides(slides.slice(0, -1))}>Remove 1 slide</button>
-
-      <div>&nbsp;</div>
-
-      <ReactInteractableSlider debug={true} navigationType={'both'}>
+      <ReactInteractableSlider {...slider[0]}>
         {slides.map(v => (
           <div style={style} key={v}>
             {v + 1}
           </div>
         ))}
       </ReactInteractableSlider>
+      <Debugger slider={slider} />
     </>
   );
 }
