@@ -10,8 +10,10 @@ export const arrow = (type, isPullUp) =>
     'arrow--pull-up': isPullUp
   });
 
-export const dotsContainer = cx('dots-container');
-
+export const dotsContainer = cellAlign =>
+  cx('dots-container', {
+    'dots-container--rtl': cellAlign === 'right'
+  });
 export const dot = selected =>
   cx('dot', {
     selected

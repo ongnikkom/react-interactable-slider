@@ -11,7 +11,7 @@ function SnapPointDebugger() {
   return (
     <div className={container}>
       {snapPoints.map(({ x }, i) => (
-        <div className={point} key={i} style={{ left: -x }} />
+        <div className={point} key={i} style={{ left: x }} />
       ))}
     </div>
   );

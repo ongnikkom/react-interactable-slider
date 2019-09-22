@@ -20,12 +20,15 @@ function App() {
     widthPerSlide: 200
   });
 
-  const [slides, setSlides] = useState(Array.from(Array(15).keys()));
+  const [slides, setSlides] = useState(Array.from(Array(7).keys()));
   const [count, setCount] = useState(0);
   const ref = useRef(ref);
 
   return (
     <>
+      <button onClick={() => setSlides([...slides, slides.length])}>Increment Slides</button>
+      <button onClick={() => setCount(count + 1)}>Increment Count</button>
+      {count}
       <ReactInteractableSlider {...slider[0]}>
         {slides.map(v => (
           <div style={style} key={v}>

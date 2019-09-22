@@ -47,8 +47,11 @@ function Container({ children }) {
       className={containerClass}
       ref={ref}
       style={{ width: !responsive ? parseInt(sliderWidth) : '100%' }}
+      dir={cellAlign === 'left' ? 'ltr' : 'rtl'}
     >
-      <div className={containerInnerClass}>{children}</div>
+      <div id="view-container" className={containerInnerClass}>
+        {children}
+      </div>
       {hasNav && <Navigation />}
     </div>
   );

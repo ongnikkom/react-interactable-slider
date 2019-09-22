@@ -1,6 +1,4 @@
 .container {
-  direction: ltr;
-
   position: relative;
   box-sizing: border-box;
   margin: 0 auto;
@@ -16,20 +14,12 @@
     align-items: center;
     overflow-x: hidden;
 
-    &--left {
-      justify-content: flex-end;
-
-      > div:first-child:before {
-        right: 0;
-      }
+    &--left > div:first-child:before {
+      right: 0;
     }
 
-    &--right {
-      justify-content: flex-start;
-
-      > div:first-child:before {
-        left: 0;
-      }
+    &--right > div:first-child:before {
+      left: 0;
     }
 
     &--indicator > div:first-child:before {

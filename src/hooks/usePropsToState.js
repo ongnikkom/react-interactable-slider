@@ -4,7 +4,7 @@ import useMergeState from './useMergeState';
 const internalProps = {
   currentSnapPoint: 0,
   responsive: true,
-  sliderWidth: 800,
+  sliderWidth: false,
   slides: [],
   snapPoints: [],
   view: null

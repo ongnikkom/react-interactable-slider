@@ -84,4 +84,16 @@
       margin-right: 0;
     }
   }
+
+  &--rtl .dot {
+    &:first-child {
+      margin-left: 5px;
+      margin-right: 0;
+    }
+
+    &:last-child {
+      margin-right: 5px;
+      margin-left: 0;
+    }
+  }
 }

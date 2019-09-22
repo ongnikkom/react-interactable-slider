@@ -23,20 +23,20 @@ function Navigation() {
       <>
         <div
           className={arrow('left', navigationType === 'both')}
-          onClick={isLeft ? navLeft : navRight}
-          disabled={isLeft ? leftDisabled : rightDisabled}
+          onClick={isLeft ? navRight : navLeft}
+          disabled={isLeft ? rightDisabled : leftDisabled}
         />
         <div
           className={arrow('right', navigationType === 'both')}
-          onClick={isLeft ? navRight : navLeft}
-          disabled={isLeft ? rightDisabled : leftDisabled}
+          onClick={isLeft ? navLeft : navRight}
+          disabled={isLeft ? leftDisabled : rightDisabled}
         />
       </>
     );
   }, [currentSnapPoint, navigationType, snapPoints]);
 
   const renderDots = useCallback(() => {
-    const selectedDot = isLeft ? snapPoints.length - currentSnapPoint - 1 : currentSnapPoint;
+    const selectedDot = currentSnapPoint;
 
     const onClick = e => {
       const { target } = e;
@@ -46,7 +46,7 @@ function Navigation() {
     };
 
     return (
-      <div className={dotsContainer}>
+      <div className={dotsContainer(cellAlign)}>
         {snapPoints.map((v, i) => {
           return <div className={dot(i === selectedDot)} key={i} onClick={onClick} />;
         })}
