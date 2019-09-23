@@ -60,7 +60,7 @@ module.exports = (env, options) => {
       ...(options.mode !== 'production'
         ? [
             new BundleAnalyzerPlugin({
-              analyzerPort: 8889
+              analyzerPort: 8083
             })
           ]
         : [])
