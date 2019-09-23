@@ -31,8 +31,8 @@ function getSnapPoints(state) {
       let y = widthPerSlide * counter;
 
       if (!fullWidthPerSlide) {
-        const diff = x - spacer;
-        if (diff) x = Math.abs(diff);
+        const diff = Math.abs(x - spacer);
+        if (diff) x = diff;
 
         const margin = marginGaps * i;
         x += margin;
@@ -100,8 +100,11 @@ function useSlider([state, setState], interactableRef, forceDragEnabled) {
     widthPerSlide
   ]);
 
+  const filteredSnapPoints = useMemo(() => {
+    return snapPoints.filter(snapPoint => excessWidth >= Math.abs(snapPoint.x));
+  }, [snapPoints]);
+
   useLayoutEffect(() => {
-    const filteredSnapPoints = snapPoints.filter(snapPoint => excessWidth >= Math.abs(snapPoint.x));
     if (filteredSnapPoints.length > 1) {
       setState({
         snapPoints: filteredSnapPoints,
@@ -110,12 +113,12 @@ function useSlider([state, setState], interactableRef, forceDragEnabled) {
     } else {
       setState({ snapPoints: [], dragEnabled: false });
     }
-  }, [snapPoints, forceDragEnabled]);
+  }, [filteredSnapPoints, forceDragEnabled]);
 
   const changePosition = useCallback(() => view && view.current.changePosition({ x: 0, y: 0 }));
   useLayoutEffect(() => {
     changePosition();
-  }, [cellAlign, sliderWidth, fullWidthPerSlide]);
+  }, [cellAlign, fullWidthPerSlide, marginGapsPerSlide, sliderWidth, widthPerSlide]);
 
   const render = useCallback(children => {
     const count = Children.count(children);
