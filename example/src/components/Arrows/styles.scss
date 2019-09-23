@@ -1,0 +1,29 @@
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+
+  > i {
+    font-size: 30px;
+    color: #666;
+  }
+
+  &--left {
+    left : 15px;
+  }
+
+  &--right {
+    right: 15px;
+  }
+
+  &--pull {
+    margin-top: -19px;
+  }
+
+  &--disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.3;
+  }
+}

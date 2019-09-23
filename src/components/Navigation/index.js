@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react';
+import React, { cloneElement, useCallback, useContext } from 'react';
 import { arrow, dotsContainer, dot } from './styles';
 import Context from '../../context';
 
@@ -28,20 +28,17 @@ function Navigation() {
     const renderCustomArrows = () => {
       const { left, right } = customArrows;
 
+      const leftArrow = cloneElement(left, { disabledArrow: leftArrowDisabled });
+      const rightArrow = cloneElement(right, { disabledArrow: rightArrowDisabled });
+
       return (
         <>
-          <div
-            className={`custom-left-arrow${leftArrowDisabled ? ' disabled' : ''}`}
-            onClick={leftEventBinding}
-          >
-            {left}
+          <div className={`custom-left-arrow`} onClick={leftEventBinding}>
+            {leftArrow}
           </div>
 
-          <div
-            className={`custom-right-arrow${rightArrowDisabled ? ' disabled' : ''}`}
-            onClick={rightEventBinding}
-          >
-            {right}
+          <div className={`custom-right-arrow`} onClick={rightEventBinding}>
+            {rightArrow}
           </div>
         </>
       );

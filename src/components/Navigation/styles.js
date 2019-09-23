@@ -15,6 +15,7 @@ export const dotsContainer = cellAlign =>
   cx('dots-container', {
     'dots-container--rtl': cellAlign === 'right'
   });
+
 export const dot = selected =>
   cx('dot', {
     selected

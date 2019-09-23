@@ -27,10 +27,34 @@ function App() {
   const [count, setCount] = useState(0);
   const ref = useRef(ref);
 
+  const addSlide = () => setSlides([...slides, slides.length]);
+
+  const removeSlide = () => setSlides(slides.slice(0, -1));
+
+  const incrementCount = () => setCount(count + 1);
+
+  const toggleCustomArrows = () => {
+    const [state, setState] = slider;
+    setState(
+      state.customArrows
+        ? { customArrows: null }
+        : {
+            customArrows: {
+              left: <LeftArrow navigationType={state.navigationType} />,
+              right: <RightArrow navigationType={state.navigationType} />
+            }
+          }
+    );
+  };
+
   return (
     <>
-      <button onClick={() => setSlides([...slides, slides.length])}>Increment Slides</button>{' '}
-      <button onClick={() => setCount(count + 1)}>Increment Count</button>
+      <button onClick={addSlide}>Add Slide</button>{' '}
+      <button onClick={removeSlide}>RemoveSlide</button>
+      <br />
+      <br />
+      <button onClick={incrementCount}>Increment Count</button>{' '}
+      <button onClick={toggleCustomArrows}>Toggle Custom Arrows</button>
       <div>&nbsp;</div>
       <div>
         Increment count (Making sure slider doesn't go back to slide 1 when using state from parent
