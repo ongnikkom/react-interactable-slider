@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 /**
@@ -27,6 +27,10 @@ import SnapPointDebugger from './components/SnapPointDebugger';
 ReactInteractableSlider.propTypes = {
   cellAlign: PropTypes.oneOf(['left', 'right']),
   children: PropTypes.node.isRequired,
+  customArrows: PropTypes.shape({
+    left: PropTypes.element.isRequired,
+    right: PropTypes.element.isRequired
+  }),
   dragEnabled: PropTypes.bool,
   debug: PropTypes.bool,
   fullWidthPerSlide: PropTypes.bool,
@@ -57,7 +61,7 @@ function ReactInteractableSlider(props) {
   const propsToState = usePropsToState(props);
 
   // Build the slider
-  const [render] = useSlider(propsToState, interactableRef);
+  const [render] = useSlider(propsToState, interactableRef, props.dragEnabled);
 
   // Get required state for our Interactable.View
   const { dragEnabled, snapPoints } = propsToState[0];

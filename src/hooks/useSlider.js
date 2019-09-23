@@ -1,4 +1,4 @@
-import React, { Children, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, { Children, useCallback, useEffect, useLayoutEffect, useMemo } from 'react';
 import SlidePort from '../components/SlidePort';
 
 function getSnapPoints(state) {
@@ -58,7 +58,7 @@ function getSnapPoints(state) {
   return [[], 0];
 }
 
-function useSlider([state, setState], interactableRef) {
+function useSlider([state, setState], interactableRef, forceDragEnabled) {
   let slidesRef = [];
 
   const {
@@ -68,7 +68,6 @@ function useSlider([state, setState], interactableRef) {
     fullWidthPerSlide,
     marginGapsPerSlide,
     sliderWidth,
-    slides,
     view,
     widthPerSlide
   } = state;
@@ -93,21 +92,27 @@ function useSlider([state, setState], interactableRef) {
   }, [
     cellAlign,
     children,
+    dragEnabled,
     fullWidthPerSlide,
     marginGapsPerSlide,
     sliderWidth,
-    slides,
     widthPerSlide
   ]);
 
+  const filteredSnapPoints = useMemo(() => {
+    return snapPoints.filter(snapPoint => excessWidth >= Math.abs(snapPoint.x));
+  }, [snapPoints]);
+
   useLayoutEffect(() => {
-    const filteredSnapPoints = snapPoints.filter(snapPoint => excessWidth >= Math.abs(snapPoint.x));
     if (filteredSnapPoints.length > 1) {
-      setState({ snapPoints: filteredSnapPoints, dragEnabled: true });
+      setState({
+        snapPoints: filteredSnapPoints,
+        dragEnabled: forceDragEnabled !== null ? forceDragEnabled : true
+      });
     } else {
       setState({ snapPoints: [], dragEnabled: false });
     }
-  }, [snapPoints]);
+  }, [snapPoints, forceDragEnabled]);
 
   const changePosition = useCallback(() => view && view.current.changePosition({ x: 0, y: 0 }));
   useLayoutEffect(() => {

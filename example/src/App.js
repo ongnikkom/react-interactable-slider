@@ -1,8 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import useMergeState from './hooks/useMergeState';
 
-import ReactInteractableSlider, { refresh } from '../../dist';
+import ReactInteractableSlider from '../../dist';
 import Debugger from './components/Debugger';
+
+import LeftArrow from './components/Arrows/LeftArrow';
+import RightArrow from './components/Arrows/RightArrow';
 
 const style = {
   border: '1px solid #323031',
