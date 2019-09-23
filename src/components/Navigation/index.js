@@ -41,8 +41,7 @@ function Navigation() {
     const onClick = e => {
       const { target } = e;
       const index = Array.prototype.indexOf.call(target.parentNode.childNodes, target);
-      const selectedIndex = isLeft ? snapPoints.length - 1 - index : index;
-      view.current.snapTo({ index: selectedIndex });
+      view.current.snapTo({ index });
     };
 
     return (

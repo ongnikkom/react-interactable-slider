@@ -19,7 +19,6 @@ function getSnapPoints(state) {
   const isLeft = cellAlign === 'left';
   const marginGaps = marginGapsPerSlide * 2;
   const conditionalSlides = isLeft ? slides : slides.slice().reverse();
-  // const lastSlide = conditionalSlides[conditionalSlides.length - 1];
   const filteredSlides = conditionalSlides.filter(slide => slide.offsetLeft < sliderWidth);
 
   if (filteredSlides.length > 0) {
@@ -34,6 +33,7 @@ function getSnapPoints(state) {
       if (!fullWidthPerSlide) {
         const diff = x - spacer;
         if (diff) x = Math.abs(diff);
+
         const margin = marginGaps * i;
         x += margin;
 
@@ -64,6 +64,7 @@ function useSlider([state, setState], interactableRef) {
   const {
     cellAlign,
     children,
+    dragEnabled,
     fullWidthPerSlide,
     marginGapsPerSlide,
     sliderWidth,
@@ -102,16 +103,16 @@ function useSlider([state, setState], interactableRef) {
   useLayoutEffect(() => {
     const filteredSnapPoints = snapPoints.filter(snapPoint => excessWidth >= Math.abs(snapPoint.x));
     if (filteredSnapPoints.length > 1) {
-      setState({ snapPoints: filteredSnapPoints });
+      setState({ snapPoints: filteredSnapPoints, dragEnabled: true });
     } else {
       setState({ snapPoints: [], dragEnabled: false });
     }
   }, [snapPoints]);
 
-  const snapTo = useCallback(() => view && view.current.snapTo({ index: 0 }));
+  const changePosition = useCallback(() => view && view.current.changePosition({ x: 0, y: 0 }));
   useLayoutEffect(() => {
-    snapTo();
-  }, [cellAlign, sliderWidth]);
+    changePosition();
+  }, [cellAlign, sliderWidth, fullWidthPerSlide]);
 
   const render = useCallback(children => {
     const count = Children.count(children);

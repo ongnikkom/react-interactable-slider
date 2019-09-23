@@ -26,9 +26,14 @@ function App() {
 
   return (
     <>
-      <button onClick={() => setSlides([...slides, slides.length])}>Increment Slides</button>
+      <button onClick={() => setSlides([...slides, slides.length])}>Increment Slides</button>{' '}
       <button onClick={() => setCount(count + 1)}>Increment Count</button>
-      {count}
+      <div>&nbsp;</div>
+      <div>
+        Increment count (Making sure slider doesn't go back to slide 1 when using state from parent
+        component changes): <b>{count}</b>
+      </div>
+      <div>&nbsp;</div>
       <ReactInteractableSlider {...slider[0]}>
         {slides.map(v => (
           <div style={style} key={v}>
