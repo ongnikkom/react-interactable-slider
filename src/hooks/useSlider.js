@@ -68,6 +68,7 @@ function useSlider([state, setState], interactableRef, forceDragEnabled) {
     fullWidthPerSlide,
     marginGapsPerSlide,
     sliderWidth,
+    slides,
     view,
     widthPerSlide
   } = state;
@@ -91,19 +92,16 @@ function useSlider([state, setState], interactableRef, forceDragEnabled) {
     return getSnapPoints(state);
   }, [
     cellAlign,
-    children,
     dragEnabled,
     fullWidthPerSlide,
     marginGapsPerSlide,
     sliderWidth,
+    slides,
     widthPerSlide
   ]);
 
-  const filteredSnapPoints = useMemo(() => {
-    return snapPoints.filter(snapPoint => excessWidth >= Math.abs(snapPoint.x));
-  }, [snapPoints]);
-
   useLayoutEffect(() => {
+    const filteredSnapPoints = snapPoints.filter(snapPoint => excessWidth >= Math.abs(snapPoint.x));
     if (filteredSnapPoints.length > 1) {
       setState({
         snapPoints: filteredSnapPoints,
