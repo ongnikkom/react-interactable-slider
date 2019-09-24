@@ -31,16 +31,8 @@ function Container({ children }) {
   useEffect(() => {
     if (Object.getOwnPropertyNames(dimensions).length < 1) return;
     const { width } = dimensions;
-    const responsiveSliderWidth = responsive ? width : sliderWidth;
-    if (fullWidthPerSlide) {
-      setState({
-        sliderWidth: responsiveSliderWidth,
-        widthPerSlide: responsiveSliderWidth
-      });
-    } else {
-      setState({ sliderWidth: responsiveSliderWidth });
-    }
-  }, [dimensions]);
+    setState({ sliderWidth: responsive ? width : sliderWidth });
+  }, [dimensions, fullWidthPerSlide]);
 
   return (
     <div

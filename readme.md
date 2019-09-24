@@ -40,7 +40,7 @@ customArrows={{ left: <LeftArrow />, right: <RightArrow />}}
 dragEnabled={true}
 
 /**
- * Reveal debugging options that can let you play
+ * Reveal debugging borders and snapPoints
  * around with your slider
  * @param {Boolean}
  */
@@ -96,8 +96,8 @@ function App() {
     <ReactInteractableSlider
       cellAlign="left"
       navigationType="dots"
-      slideWidth={182}
-      slideMarginGaps={4}
+      widthPerSlide={182}
+      marginGapsPerSlide={4}
       debug={true}
     >
       <div style={style}>1</div>

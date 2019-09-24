@@ -147,7 +147,6 @@ function Debugger({ slider }) {
           name={`${formNamePrefix}-width-per-slide`}
           value={widthPerSlide}
           onChange={onChangeWidthPerSlide}
-          disabled={fullWidthPerSlide}
         />
       </div>
     </div>

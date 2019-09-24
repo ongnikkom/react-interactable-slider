@@ -1,69 +1,15 @@
 import React, { Children, useCallback, useEffect, useLayoutEffect, useMemo } from 'react';
+import useDocumentVisibility from './useDocumentVisibility';
 import SlidePort from '../components/SlidePort';
 
-function getSnapPoints(state) {
-  const {
-    cellAlign,
-    children = [],
-    fullWidthPerSlide,
-    marginGapsPerSlide,
-    sliderWidth,
-    slides,
-    widthPerSlide
-  } = state;
-
-  if (slides.length < 1) return [[], 0];
-
-  const snapPoints = [{ x: 0 }];
-  const mask = [{ x: 0 }];
-  const isLeft = cellAlign === 'left';
-  const marginGaps = marginGapsPerSlide * 2;
-  const conditionalSlides = isLeft ? slides : slides.slice().reverse();
-  const filteredSlides = conditionalSlides.filter(slide => slide.offsetLeft < sliderWidth);
-
-  if (filteredSlides.length > 0) {
-    const lastVisibleSlide = filteredSlides[filteredSlides.length - 1];
-    const spacer = fullWidthPerSlide ? 0 : sliderWidth - lastVisibleSlide.offsetLeft;
-
-    for (let i = 0, len = children.length; i < len; i++) {
-      const counter = i + 1;
-      let x = widthPerSlide * counter;
-      let y = widthPerSlide * counter;
-
-      if (!fullWidthPerSlide) {
-        const diff = Math.abs(x - spacer);
-        if (diff) x = diff;
-
-        const margin = marginGaps * i;
-        x += margin;
-
-        const marginY = marginGaps * counter;
-        y += marginY;
-      }
-
-      snapPoints.push({
-        x: isLeft ? -x : x
-      });
-
-      mask.push({
-        x: y
-      });
-    }
-
-    const lastPoint = Math.abs(mask[mask.length - 1].x);
-
-    return [snapPoints, lastPoint - sliderWidth];
-  }
-
-  return [[], 0];
-}
-
 function useSlider([state, setState], interactableRef, forceDragEnabled) {
+  const documentVisibility = useDocumentVisibility();
   let slidesRef = [];
 
   const {
     cellAlign,
     children,
+    currentSnapPoint,
     dragEnabled,
     fullWidthPerSlide,
     marginGapsPerSlide,
@@ -73,25 +19,9 @@ function useSlider([state, setState], interactableRef, forceDragEnabled) {
     widthPerSlide
   } = state;
 
-  /**
-   * Set view
-   */
-  useEffect(() => {
-    setState({ view: interactableRef });
-  }, []);
-
-  useEffect(() => {
-    setState({ slides: slidesRef });
-  }, [children]);
-
-  useLayoutEffect(() => {
-    setState({ widthPerSlide: fullWidthPerSlide ? sliderWidth : widthPerSlide });
-  }, [fullWidthPerSlide, widthPerSlide]);
-
-  const [snapPoints, excessWidth] = useMemo(() => {
-    return getSnapPoints(state);
-  }, [
+  const recalculateOnChange = useMemo(() => [
     cellAlign,
+    documentVisibility,
     dragEnabled,
     fullWidthPerSlide,
     marginGapsPerSlide,
@@ -100,25 +30,89 @@ function useSlider([state, setState], interactableRef, forceDragEnabled) {
     widthPerSlide
   ]);
 
-  const filteredSnapPoints = useMemo(() => {
-    return snapPoints.filter(snapPoint => excessWidth >= Math.abs(snapPoint.x));
+  const resetPosition = useCallback(() => view && view.current.changePosition({ x: 0, y: 0 }));
+  const snapTo = useCallback(index => view && view.current.snapTo({ index }));
+
+  const getSnapPoints = useCallback(() => {
+    if (slides.length < 1) return;
+
+    const snapPoints = [{ x: 0 }];
+    const marginGaps = marginGapsPerSlide * 2;
+    const isLTR = cellAlign === 'left';
+
+    const elements = isLTR ? slides : slides.slice().reverse();
+    const visibleElements = elements.filter(e => {
+      let offsetLeft = e.offsetLeft + widthPerSlide;
+      return offsetLeft <= sliderWidth;
+    });
+
+    if (visibleElements.length === slides.length) {
+      // nothing to do all elements are visible within the container
+      return;
+    }
+
+    const lastVisibleElement = elements[visibleElements.length];
+
+    let initialSnapPoint = !fullWidthPerSlide
+      ? widthPerSlide - (sliderWidth - lastVisibleElement.offsetLeft)
+      : 0;
+
+    if (!fullWidthPerSlide) snapPoints.push({ x: isLTR ? -initialSnapPoint : initialSnapPoint });
+
+    const lastElement = elements[elements.length - 1];
+
+    const lastPoint =
+      lastVisibleElement !== lastElement ? lastElement.offsetLeft + widthPerSlide + marginGaps : 0;
+
+    const excessWidth = Math.abs(lastPoint > 0 ? lastPoint - sliderWidth : 0);
+
+    for (let i = 0, len = elements.length; i < len; i++) {
+      const element = elements[i];
+      let x = element.offsetLeft;
+
+      if (!fullWidthPerSlide && (excessWidth > 0 && excessWidth > x) && x > 0) {
+        x = x + initialSnapPoint;
+        if (excessWidth > x) {
+          snapPoints.push({ x: isLTR ? -x : x });
+        }
+      } else if (fullWidthPerSlide && x > 0) {
+        x = sliderWidth * i;
+        snapPoints.push({ x: isLTR ? -x : x, damping: 0.62 });
+      }
+    }
+
+    return snapPoints;
+  }, recalculateOnChange);
+
+  useEffect(() => {
+    setState({ view: interactableRef });
+  }, []);
+
+  useEffect(() => {
+    setState({ slides: slidesRef });
+  }, [children]);
+
+  const snapPoints = useMemo(() => {
+    return (documentVisibility === 'hidden' ? [] : getSnapPoints()) || [];
+  }, recalculateOnChange);
+
+  useLayoutEffect(() => {
+    if (snapPoints.length < 1) {
+      setState({ snapPoints, dragEnabled: false });
+      resetPosition();
+    } else {
+      setState({ snapPoints, dragEnabled: forceDragEnabled !== null ? forceDragEnabled : true });
+    }
   }, [snapPoints]);
 
   useLayoutEffect(() => {
-    if (filteredSnapPoints.length > 1) {
-      setState({
-        snapPoints: filteredSnapPoints,
-        dragEnabled: forceDragEnabled !== null ? forceDragEnabled : true
-      });
-    } else {
-      setState({ snapPoints: [], dragEnabled: false });
-    }
-  }, [filteredSnapPoints, forceDragEnabled]);
-
-  const changePosition = useCallback(() => view && view.current.changePosition({ x: 0, y: 0 }));
-  useLayoutEffect(() => {
-    changePosition();
+    resetPosition();
   }, [cellAlign, fullWidthPerSlide, marginGapsPerSlide, sliderWidth, widthPerSlide]);
+
+  useLayoutEffect(() => {
+    const lastSnapPoint = snapPoints.filter((v, i) => i === currentSnapPoint);
+    if (lastSnapPoint.length < 1) snapTo(currentSnapPoint - 1);
+  }, [currentSnapPoint, slides]);
 
   const render = useCallback(children => {
     const count = Children.count(children);

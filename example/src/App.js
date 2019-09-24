@@ -6,11 +6,7 @@ import Debugger from './components/Debugger';
 
 import LeftArrow from './components/Arrows/LeftArrow';
 import RightArrow from './components/Arrows/RightArrow';
-
-const style = {
-  border: '1px solid #323031',
-  height: 300
-};
+import ProductCard from './components/ProductCard';
 
 function App() {
   const slider = useMergeState({
@@ -20,10 +16,10 @@ function App() {
     fullWidthPerSlide: false,
     marginGapsPerSlide: 4,
     navigationType: 'both',
-    widthPerSlide: 200
+    widthPerSlide: 180
   });
 
-  const [slides, setSlides] = useState(Array.from(Array(7).keys()));
+  const [slides, setSlides] = useState(Array.from(Array(9).keys()));
   const [count, setCount] = useState(0);
   const ref = useRef(ref);
 
@@ -57,15 +53,13 @@ function App() {
       <button onClick={toggleCustomArrows}>Toggle Custom Arrows</button>
       <div>&nbsp;</div>
       <div>
-        Increment count (Making sure slider doesn't go back to slide 1 when using state from parent
-        component changes): <b>{count}</b>
+        Increment count (Making sure that the slider doesn't go back to slide 1 when state from the
+        parent component changes): <b>{count}</b>
       </div>
       <div>&nbsp;</div>
       <ReactInteractableSlider {...slider[0]}>
         {slides.map(v => (
-          <div style={style} key={v}>
-            {v + 1}
-          </div>
+          <ProductCard key={v} />
         ))}
       </ReactInteractableSlider>
       <Debugger slider={slider} />
