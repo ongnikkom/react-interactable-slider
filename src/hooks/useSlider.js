@@ -30,8 +30,7 @@ function useSlider([state, setState], interactableRef, forceDragEnabled) {
     widthPerSlide
   ]);
 
-  const resetPosition = useCallback(() => view && view.current.changePosition({ x: 0, y: 0 }));
-  const snapTo = useCallback(index => view && view.current.snapTo({ index }));
+  const resetPosition = useCallback((x = 0) => view && view.current.changePosition({ x, y: 0 }));
 
   const getSnapPoints = useCallback(() => {
     if (slides.length < 1) return;
@@ -110,8 +109,12 @@ function useSlider([state, setState], interactableRef, forceDragEnabled) {
   }, [cellAlign, fullWidthPerSlide, marginGapsPerSlide, sliderWidth, widthPerSlide]);
 
   useLayoutEffect(() => {
-    const lastSnapPoint = snapPoints.filter((v, i) => i === currentSnapPoint);
-    if (lastSnapPoint.length < 1) snapTo(currentSnapPoint - 1);
+    const filteredSnapPoint = snapPoints.filter((v, i) => i === currentSnapPoint);
+    if (filteredSnapPoint.length < 1) {
+      const lastSnapPoint = currentSnapPoint - 1;
+      const position = snapPoints[lastSnapPoint] || null;
+      if (position) resetPosition(position.x);
+    }
   }, [currentSnapPoint, slides]);
 
   const render = useCallback(children => {

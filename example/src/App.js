@@ -59,7 +59,7 @@ function App() {
       <div>&nbsp;</div>
       <ReactInteractableSlider {...slider[0]}>
         {slides.map(v => (
-          <ProductCard key={v} />
+          <ProductCard key={v}>{v + 1}</ProductCard>
         ))}
       </ReactInteractableSlider>
       <Debugger slider={slider} />
