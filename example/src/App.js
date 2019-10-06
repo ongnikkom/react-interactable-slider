@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import useMergeState from './hooks/useMergeState';
 
 import ReactInteractableSlider from '../../dist';
@@ -22,7 +22,6 @@ function App() {
   const [slides, setSlides] = useState(Array.from(Array(9).keys()));
   const [count, setCount] = useState(0);
   const [state, setState] = slider;
-  const ref = useRef(ref);
 
   const addSlide = () => setSlides([...slides, slides.length]);
 
