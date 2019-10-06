@@ -14,21 +14,13 @@ const internalProps = {
 function usePropsToState(props) {
   internalProps.forceDragEnabled = props.dragEnabled;
 
-  const combinedProps = {
-    ...props,
-    ...internalProps
-  };
-
-  // We don't need this on our state
-  delete combinedProps.children;
-
-  const [state, setState] = useMergeState(combinedProps);
+  const [state, setState] = useMergeState(internalProps);
 
   /**
    * Update props for our slider state
    */
   useLayoutEffect(() => {
-    setState({ ...props });
+    setState(props);
   }, [props]);
 
   return [state, setState];

@@ -22,11 +22,8 @@ function usePreventDragOnScroll([state, setState]) {
       switch (e.type) {
         case 'mousewheel':
         case 'scroll':
-          clearTimeout(timer);
           setState({ dragEnabled: false });
-          timer = setTimeout(() =>
-            setState({ dragEnabled: forceDragEnabled !== null ? forceDragEnabled : true })
-          );
+          setState({ dragEnabled: forceDragEnabled !== null ? forceDragEnabled : true });
           break;
         default: {
           const currentY = e.touches[0].pageY;
