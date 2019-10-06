@@ -21,6 +21,7 @@ function App() {
 
   const [slides, setSlides] = useState(Array.from(Array(9).keys()));
   const [count, setCount] = useState(0);
+  const [state, setState] = slider;
   const ref = useRef(ref);
 
   const addSlide = () => setSlides([...slides, slides.length]);
@@ -30,7 +31,6 @@ function App() {
   const incrementCount = () => setCount(count + 1);
 
   const toggleCustomArrows = () => {
-    const [state, setState] = slider;
     setState(
       state.customArrows
         ? { customArrows: null }
@@ -59,7 +59,7 @@ function App() {
       <div>&nbsp;</div>
       <ReactInteractableSlider {...slider[0]}>
         {slides.map(v => (
-          <ProductCard key={v}>{v + 1}</ProductCard>
+          <ProductCard fullWidthPerSlide={state.fullWidthPerSlide} key={v} />
         ))}
       </ReactInteractableSlider>
       <Debugger slider={slider} />

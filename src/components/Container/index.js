@@ -3,7 +3,9 @@ import { container, containerInner } from './styles';
 import Context from '../../context';
 
 import useDimensions from '../../hooks/useDimensions';
+
 import Navigation from '../Navigation';
+import usePreventDragOnScroll from '../../hooks/usePreventDragOnScroll';
 
 function Container({ children }) {
   const [state, setState] = useContext(Context);
@@ -17,6 +19,8 @@ function Container({ children }) {
     sliderWidth,
     snapPoints
   } = state;
+
+  const [panResponder] = usePreventDragOnScroll([state, setState]);
 
   const containerClass = useCallback(container(state), [debug]);
   const containerInnerClass = useCallback(containerInner(state), [cellAlign, debug, snapPoints]);
@@ -41,7 +45,9 @@ function Container({ children }) {
       style={{ width: !responsive ? parseInt(sliderWidth) : '100%' }}
       dir={cellAlign === 'left' ? 'ltr' : 'rtl'}
     >
-      <div className={containerInnerClass}>{children}</div>
+      <div className={containerInnerClass} {...panResponder.panHandlers}>
+        {children}
+      </div>
       {hasNav && <Navigation />}
     </div>
   );

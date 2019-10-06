@@ -81,7 +81,6 @@ Build the slider and put your custom content or elements. Please take note that 
 **_Important notes before creating your slider:_**
 
 - Add borders to your element to visually see the width when building your initial slides.
-- Make sure all `a`, `img` inside the slides is not using `display: inline` style (other display value is okay). These elements should have dimensions so that the slider will prevent drag conflicts with other draggable elements.
 
 ```javascript
 import ReactInteractableSlider from 'react-interactable-slider';

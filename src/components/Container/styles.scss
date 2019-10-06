@@ -12,7 +12,7 @@
     width: 100%;
     display: flex;
     align-items: center;
-    overflow-x: hidden;
+    overflow: hidden;
 
     &--left > div:first-child:before {
       right: 0;
@@ -28,6 +28,7 @@
 
     > div:first-child {
       flex: auto;
+      touch-action: pan-y;
 
       &:before {
         content: '';

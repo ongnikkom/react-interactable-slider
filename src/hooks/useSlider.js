@@ -2,7 +2,7 @@ import React, { Children, useCallback, useEffect, useLayoutEffect, useMemo } fro
 import useDocumentVisibility from './useDocumentVisibility';
 import SlidePort from '../components/SlidePort';
 
-function useSlider([state, setState], interactableRef, forceDragEnabled) {
+function useSlider([state, setState], interactableRef) {
   const documentVisibility = useDocumentVisibility();
   let slidesRef = [];
 
@@ -10,7 +10,7 @@ function useSlider([state, setState], interactableRef, forceDragEnabled) {
     cellAlign,
     children,
     currentSnapPoint,
-    dragEnabled,
+    forceDragEnabled,
     fullWidthPerSlide,
     marginGapsPerSlide,
     sliderWidth,
@@ -22,7 +22,6 @@ function useSlider([state, setState], interactableRef, forceDragEnabled) {
   const recalculateOnChange = useMemo(() => [
     cellAlign,
     documentVisibility,
-    dragEnabled,
     fullWidthPerSlide,
     marginGapsPerSlide,
     sliderWidth,
@@ -109,10 +108,9 @@ function useSlider([state, setState], interactableRef, forceDragEnabled) {
   }, [cellAlign, fullWidthPerSlide, marginGapsPerSlide, sliderWidth, widthPerSlide]);
 
   useLayoutEffect(() => {
-    const filteredSnapPoint = snapPoints.filter((v, i) => i === currentSnapPoint);
-    if (filteredSnapPoint.length < 1) {
-      const lastSnapPoint = currentSnapPoint - 1;
-      const position = snapPoints[lastSnapPoint] || null;
+    const filteredSnapPoint = snapPoints[currentSnapPoint];
+    if (!filteredSnapPoint) {
+      const position = snapPoints[currentSnapPoint - 1];
       if (position) resetPosition(position.x);
     }
   }, [currentSnapPoint, slides]);

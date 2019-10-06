@@ -55,13 +55,11 @@ function ReactInteractableSlider(props) {
 
   const interactableRef = useRef();
 
-  usePreventDragOnTagNames(['a', 'img']);
-
   // Convert and setup state from props
   const propsToState = usePropsToState(props);
 
   // Build the slider
-  const [render] = useSlider(propsToState, interactableRef, props.dragEnabled);
+  const [render] = useSlider(propsToState, interactableRef);
 
   // Get required state for our Interactable.View
   const { dragEnabled, snapPoints } = propsToState[0];
@@ -70,6 +68,13 @@ function ReactInteractableSlider(props) {
     snapPoint => propsToState[1]({ currentSnapPoint: snapPoint.index }),
     []
   );
+
+  const onDrag = useCallback(e => {
+    const x = Math.floor(Math.abs(e.x));
+    if (e.state === 'end' && x > 0) propsToState[1]({ isDragging: false });
+  }, []);
+
+  usePreventDragOnTagNames(['a', 'img']);
 
   return (
     <Provider value={propsToState}>
@@ -80,6 +85,7 @@ function ReactInteractableSlider(props) {
           ref={interactableRef}
           snapPoints={snapPoints}
           onSnap={onSnap}
+          onDrag={onDrag}
         >
           {render(children)}
         </Interactable.View>

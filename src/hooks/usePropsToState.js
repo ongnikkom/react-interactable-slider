@@ -3,14 +3,17 @@ import useMergeState from './useMergeState';
 
 const internalProps = {
   currentSnapPoint: 0,
+  isDragging: false,
+  forceDragEnabled: false,
   responsive: true,
   sliderWidth: 800,
   slides: [],
-  snapPoints: [],
-  view: null
+  snapPoints: []
 };
 
 function usePropsToState(props) {
+  internalProps.forceDragEnabled = props.dragEnabled;
+
   const combinedProps = {
     ...props,
     ...internalProps

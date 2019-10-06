@@ -1,4 +1,14 @@
 .product-card {
   height: 300px;
   border: 1px solid #323031;
+
+  &__description {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
+    font-weight: 400;
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    padding: 0 5px;
+  }
 }
