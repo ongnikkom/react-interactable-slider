@@ -3,44 +3,42 @@ import PanResponder from 'react-panresponder-web';
 import useEventListener from './useEventListener';
 
 function usePreventDragOnScroll([state, setState]) {
-  const { forceDragEnabled, isDragging } = state;
-  const [scrollable, setScrollable] = useState(false);
+  const { dragEnabled, forceDragEnabled, scrollable } = state;
   const [pageY, setPageY] = useState(0);
 
   const panResponder = useCallback(
     PanResponder.create({
+      onStartShouldSetPanResponder: () => {
+        if (forceDragEnabled) setState({ dragEnabled: forceDragEnabled, scrollable: false });
+        return false;
+      },
       onMoveShouldSetPanResponder: (evt, gestureState) => {
-        if (gestureState.dx > 3 || gestureState.dx < -3) setState({ isDragging: true });
+        if (gestureState.dx > 3 || gestureState.dx < -3) {
+          // do nothing
+        } else if (gestureState.dy > 3 || gestureState.dy < -3) {
+          setState({ dragEnabled: false, scrollable: true });
+        }
         return false;
       }
-    })
+    }),
+    [dragEnabled, forceDragEnabled, scrollable]
   );
 
-  let timer;
   const handleScrollEvent = useCallback(
     e => {
-      switch (e.type) {
-        case 'mousewheel':
-        case 'scroll':
-          setState({ dragEnabled: false });
-          setState({ dragEnabled: forceDragEnabled !== null ? forceDragEnabled : true });
-          break;
-        default: {
-          const currentY = e.touches[0].pageY;
-          if (Math.abs(currentY - pageY) < 10) return;
-          setScrollable(true);
-          setPageY(currentY);
-        }
+      if (e.type === 'touchstart') {
+        const currentY = e.touches[0].pageY;
+        if (Math.abs(currentY - pageY) < 3) e.preventDefault();
       }
 
-      if (!scrollable && e.type === 'touchmove') e.preventDefault();
+      if (!scrollable) e.preventDefault();
     },
-    [isDragging, pageY, scrollable]
+    [dragEnabled, pageY, scrollable]
   );
 
   const touchStartHandler = useCallback(e => setPageY(e.touches[0].pageY), []);
-  const touchMoveHandler = useCallback(handleScrollEvent, [isDragging, pageY, scrollable]);
-  const scrollHandler = useCallback(handleScrollEvent, [isDragging, pageY, scrollable]);
+  const touchMoveHandler = useCallback(handleScrollEvent, [scrollable]);
+  const scrollHandler = useCallback(handleScrollEvent, [scrollable]);
 
   useEventListener('touchstart', touchStartHandler, window, { passive: false });
   useEventListener('touchmove', touchMoveHandler, window, { passive: false });

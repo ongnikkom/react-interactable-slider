@@ -71,7 +71,7 @@ function ReactInteractableSlider(props) {
 
   const onDrag = useCallback(e => {
     const x = Math.floor(Math.abs(e.x));
-    if (e.state === 'end' && x > 0) propsToState[1]({ isDragging: false });
+    if (e.state === 'end' && x > 0) propsToState[1]({ dragEnabled: true, scrollable: true });
   }, []);
 
   usePreventDragOnTagNames(['a', 'img']);

@@ -71,7 +71,7 @@ function useSlider([state, setState], interactableRef) {
       if (!fullWidthPerSlide && (excessWidth > 0 && excessWidth > x) && x > 0) {
         x = x + initialSnapPoint;
         if (excessWidth > x) {
-          snapPoints.push({ x: isLTR ? -x : x });
+          snapPoints.push({ x: isLTR ? -x : x, damping: 0.62 });
         }
       } else if (fullWidthPerSlide && x > 0) {
         x = sliderWidth * i;
@@ -99,9 +99,9 @@ function useSlider([state, setState], interactableRef) {
       setState({ snapPoints, dragEnabled: false });
       resetPosition();
     } else {
-      setState({ snapPoints, dragEnabled: forceDragEnabled !== null ? forceDragEnabled : true });
+      setState({ snapPoints, dragEnabled: forceDragEnabled });
     }
-  }, [snapPoints]);
+  }, [snapPoints, forceDragEnabled]);
 
   useLayoutEffect(() => {
     resetPosition();
