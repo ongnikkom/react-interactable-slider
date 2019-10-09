@@ -35,8 +35,8 @@ function App() {
         ? { customArrows: null }
         : {
             customArrows: {
-              left: <LeftArrow navigationType={state.navigationType} />,
-              right: <RightArrow navigationType={state.navigationType} />
+              left: <LeftArrow />,
+              right: <RightArrow />
             }
           }
     );

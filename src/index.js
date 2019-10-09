@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 /**
@@ -70,12 +70,19 @@ function ReactInteractableSlider(props) {
 
   const [render] = useSlider([state, setState]);
 
+  /**
+   * Identify our current snap point so we can build
+   * a navigation for the slider.
+   */
+  const onSnap = useCallback(({ index }) => setState({ currentSnapPoint: index }), []);
+
   return (
     <Provider value={[state, setState]}>
       <Container>
         <Interactable.View
           horizontalOnly
           dragEnabled={dragEnabled}
+          onSnap={onSnap}
           ref={interactableRef}
           snapPoints={snapPoints}
         >

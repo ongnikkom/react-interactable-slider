@@ -39,7 +39,7 @@ function useSlider([state, setState]) {
   useLayoutEffect(() => {
     const refs = cellAlign === 'left' ? nodes : nodes.slice().reverse();
     setState({ slides: refs });
-  }, [cellAlign, Children.count(children), marginGapsPerSlide, widthPerSlide]);
+  }, [cellAlign, Children.count(children), fullWidthPerSlide, marginGapsPerSlide, widthPerSlide]);
 
   /**
    * Compute the snapPoints to create the slider behavior.
