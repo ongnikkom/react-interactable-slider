@@ -1,14 +1,16 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useContext, useMemo, useRef } from 'react';
 import { container, containerInner } from './styles';
 import { useDidUpdate } from '../../helpers/customHooks';
 import useDimensions from '../../hooks/useDimensions';
 import Context from '../../context';
 import Navigation from '../Navigation';
+import usePreventDragConflicts from '../../hooks/usePreventDragConflicts';
 
 function Container({ children }) {
   const [state, setState] = useContext(Context);
+  const containerRef = useRef();
 
-  const { cellAlign, debug, navigationType, responsive, sliderWidth, snapPoints } = state;
+  const { cellAlign, debug, responsive, sliderWidth, snapPoints } = state;
   const direction = cellAlign === 'left' ? 'ltr' : 'rtl';
 
   const containerClass = useMemo(() => container(state), [debug]);
@@ -16,6 +18,8 @@ function Container({ children }) {
   const memoizedWidth = useMemo(() => (!responsive ? parseInt(sliderWidth) : '100%'));
 
   const [ref, dimensions] = useDimensions(responsive);
+
+  usePreventDragConflicts(containerRef);
 
   /**
    * We wrap it using useDidUpdate because we want to get
@@ -28,7 +32,9 @@ function Container({ children }) {
 
   return (
     <div ref={ref} style={{ width: memoizedWidth }} className={containerClass} dir={direction}>
-      <div className={containerInnerClass}>{children}</div>
+      <div ref={containerRef} className={containerInnerClass}>
+        {children}
+      </div>
       <Navigation />
     </div>
   );

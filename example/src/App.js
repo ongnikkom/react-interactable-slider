@@ -19,7 +19,7 @@ function App() {
     widthPerSlide: 180
   });
 
-  const [slides, setSlides] = useState(Array.from(Array(9).keys()));
+  const [slides, setSlides] = useState(Array.from(Array(4).keys()));
   const [count, setCount] = useState(0);
   const [state, setState] = slider;
 

@@ -115,6 +115,8 @@ function Navigation() {
   }, [currentSnapPoint, snapPoints]);
 
   const arrows = useMemo(() => {
+    if (snapPoints.length < 1) return null;
+
     switch (navigationType) {
       case 'arrows':
         return createArrows();

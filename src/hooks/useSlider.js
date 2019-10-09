@@ -10,6 +10,7 @@ function useSlider([state, setState]) {
   const {
     cellAlign,
     children,
+    dragEnabled,
     marginGapsPerSlide,
     fullWidthPerSlide,
     sliderWidth,
@@ -71,6 +72,14 @@ function useSlider([state, setState]) {
   useDidUpdate(() => {
     resetPosition();
   }, [cellAlign, fullWidthPerSlide, marginGapsPerSlide, sliderWidth, widthPerSlide]);
+
+  /**
+   * This will ensure that dragEnabled will only be true
+   * if we have snapPoints
+   */
+  useDidUpdate(() => {
+    setState({ dragEnabled: snapPoints.length > 0 });
+  }, [dragEnabled]);
 
   /**
    * We need to create a Port Component so we can set the
