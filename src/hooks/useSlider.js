@@ -1,167 +1,98 @@
-import React, { Children, useCallback, useEffect, useLayoutEffect, useMemo } from 'react';
-import useDocumentVisibility from './useDocumentVisibility';
+import React, { Children, cloneElement, useCallback, useLayoutEffect, useMemo } from 'react';
+import { useDidUpdate } from '../helpers/customHooks';
+import getSliderPortPropsByIndex from '../helpers/getSliderPortPropsByIndex';
+import getSnapPoints from '../helpers/getSnapPoints';
 import SlidePort from '../components/SlidePort';
 
-function useSlider([state, setState], interactableRef) {
-  const documentVisibility = useDocumentVisibility();
-  let slidesRef = [];
+function useSlider([state, setState]) {
+  let nodes = [];
 
   const {
     cellAlign,
     children,
-    currentSnapPoint,
-    forceDragEnabled,
-    fullWidthPerSlide,
     marginGapsPerSlide,
+    fullWidthPerSlide,
     sliderWidth,
     slides,
     view,
     widthPerSlide
   } = state;
 
-  const recalculateOnChange = useMemo(() => [
-    cellAlign,
-    documentVisibility,
-    fullWidthPerSlide,
-    marginGapsPerSlide,
-    sliderWidth,
-    slides,
-    widthPerSlide
-  ]);
+  const resetPosition = useCallback((x = 0) => view.current.changePosition({ x, y: 0 }), [view]);
 
-  const resetPosition = useCallback((x = 0) => view && view.current.changePosition({ x, y: 0 }));
+  /**
+   * Manage the array slides depending on the cell alignment.
+   * The idea of the computation is that the snapPoints should
+   * be the same for ltr or rtl direction. The only difference
+   * is that the values for ltr should be negative and rtl should
+   * be positive.
+   *
+   * ltr should be negative because starting from the left container we
+   * want to create the snapPoints outside the container. Otherwise for
+   * rtl, starting from the right container we also want to create
+   * snapPoints outside the container. In this case, we will be able
+   * to pull the slider in that direction.
+   *
+   * In case of rtl direction, we want to reverse it so we can have
+   * the exact same computation for the ltr direction.
+   */
+  useLayoutEffect(() => {
+    const refs = cellAlign === 'left' ? nodes : nodes.slice().reverse();
+    setState({ slides: refs });
+  }, [cellAlign, Children.count(children), marginGapsPerSlide, widthPerSlide]);
 
-  const getSnapPoints = useCallback(() => {
-    if (slides.length < 1) return;
-
-    const snapPoints = [{ x: 0 }];
-    const marginGaps = marginGapsPerSlide * 2;
-    const isLTR = cellAlign === 'left';
-
-    const elements = isLTR ? slides : slides.slice().reverse();
-    const visibleElements = elements.filter(e => {
-      let offsetLeft = e.offsetLeft + widthPerSlide;
-      return offsetLeft <= sliderWidth;
-    });
-
-    if (visibleElements.length === slides.length) {
-      // nothing to do all elements are visible within the container
-      return;
-    }
-
-    const lastVisibleElement = elements[visibleElements.length];
-
-    let initialSnapPoint = !fullWidthPerSlide
-      ? widthPerSlide - (sliderWidth - lastVisibleElement.offsetLeft)
-      : 0;
-
-    if (!fullWidthPerSlide) snapPoints.push({ x: isLTR ? -initialSnapPoint : initialSnapPoint });
-
-    const lastElement = elements[elements.length - 1];
-
-    const lastPoint =
-      lastVisibleElement !== lastElement ? lastElement.offsetLeft + widthPerSlide + marginGaps : 0;
-
-    const excessWidth = Math.abs(lastPoint > 0 ? lastPoint - sliderWidth : 0);
-
-    for (let i = 0, len = elements.length; i < len; i++) {
-      const element = elements[i];
-      let x = element.offsetLeft;
-
-      if (!fullWidthPerSlide && (excessWidth > 0 && excessWidth > x) && x > 0) {
-        x = x + initialSnapPoint;
-        if (excessWidth > x) {
-          snapPoints.push({ x: isLTR ? -x : x, damping: 0.62 });
-        }
-      } else if (fullWidthPerSlide && x > 0) {
-        x = sliderWidth * i;
-        snapPoints.push({ x: isLTR ? -x : x, damping: 0.62 });
-      }
-    }
-
-    return snapPoints;
-  }, recalculateOnChange);
-
-  useEffect(() => {
-    setState({ view: interactableRef });
-  }, []);
-
-  useEffect(() => {
-    setState({ slides: slidesRef });
-  }, [children]);
-
+  /**
+   * Compute the snapPoints to create the slider behavior.
+   */
   const snapPoints = useMemo(() => {
-    return (documentVisibility === 'hidden' ? [] : getSnapPoints()) || [];
-  }, recalculateOnChange);
+    return getSnapPoints(state);
+  }, [slides, sliderWidth]);
 
+  /**
+   * If it doesn't have any snap points or the slides doesn't
+   * overflow to the slider container. In this case, we
+   * should disable the drag
+   *
+   * Will run twice on the first render when responsive is false
+   * - The empty snapPoints []
+   * - The sliderWidth we have from the internalProps which is 800
+   *
+   * Will run thrice on the first render when responsive is true
+   * - Same 2 steps from above
+   * - The sliderWidth from the resize event
+   */
   useLayoutEffect(() => {
-    if (snapPoints.length < 1) {
-      setState({ snapPoints, dragEnabled: false });
-      resetPosition();
-    } else {
-      setState({ snapPoints, dragEnabled: forceDragEnabled });
-    }
-  }, [snapPoints, forceDragEnabled]);
+    setState({ snapPoints, dragEnabled: snapPoints.length > 0 });
+  }, [snapPoints]);
 
-  useLayoutEffect(() => {
+  /**
+   * Reset the position in case the following properties changed
+   */
+  useDidUpdate(() => {
     resetPosition();
   }, [cellAlign, fullWidthPerSlide, marginGapsPerSlide, sliderWidth, widthPerSlide]);
 
-  useLayoutEffect(() => {
-    const filteredSnapPoint = snapPoints[currentSnapPoint];
-    if (!filteredSnapPoint) {
-      const position = snapPoints[currentSnapPoint - 1];
-      if (position) resetPosition(position.x);
-    }
-  }, [currentSnapPoint, slides]);
-
-  const render = useCallback(children => {
+  /**
+   * We need to create a Port Component so we can set the
+   * width and margins of each slide. Because, we cannot directly
+   * set these properties from the props.children especially
+   * when we pass a React Component children instead of a
+   * regular DOM.
+   */
+  const render = useMemo(() => {
+    console.log('Render children re-rendered');
     const count = Children.count(children);
-    let margin;
-    let width;
-
     return Children.map(children, (child, i) => {
-      if (!fullWidthPerSlide) {
-        width = widthPerSlide;
-        switch (i) {
-          case 0:
-            margin =
-              cellAlign === 'left'
-                ? `0 ${marginGapsPerSlide}px 0 0`
-                : `0 0 0  ${marginGapsPerSlide}px`;
-            break;
-          case count - 1:
-            margin =
-              cellAlign === 'left'
-                ? `0 0 0 ${marginGapsPerSlide}px`
-                : `0 ${marginGapsPerSlide}px 0 0`;
-            break;
-          default:
-            margin = `0 ${marginGapsPerSlide}px`;
+      const slidePortProps = getSliderPortPropsByIndex(state, i, count);
+      return cloneElement(<SlidePort {...slidePortProps}>{child}</SlidePort>, {
+        ref: node => {
+          nodes = [...nodes, node];
+          const { ref } = child;
+          if (typeof ref === 'function') ref(node);
         }
-      } else {
-        width = sliderWidth;
-        margin = 0;
-      }
-
-      return React.cloneElement(
-        <SlidePort margin={margin} width={width}>
-          {child}
-        </SlidePort>,
-        {
-          ref: node => {
-            if (!node) return;
-            if (i < 1) slidesRef = [];
-            slidesRef = [...slidesRef, node];
-            const { ref } = child;
-            if (typeof ref === 'function') {
-              ref(node);
-            }
-          }
-        }
-      );
+      });
     });
-  });
+  }, [cellAlign, Children.count(children), marginGapsPerSlide, fullWidthPerSlide, widthPerSlide]);
 
   return [render];
 }

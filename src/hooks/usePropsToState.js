@@ -1,28 +1,25 @@
-import { useLayoutEffect } from 'react';
-import useMergeState from './useMergeState';
+import { useMergeState, useDidUpdate } from '../helpers/customHooks';
 
 const internalProps = {
   currentSnapPoint: 0,
-  isDragging: false,
-  forceDragEnabled: false,
+  events: {
+    isDragging: false,
+    scrollable: true
+  },
   responsive: true,
   sliderWidth: 800,
-  scrollable: true,
   slides: [],
   snapPoints: []
 };
 
 function usePropsToState(props) {
-  const [state, setState] = useMergeState(internalProps);
+  const { state, set } = useMergeState({ ...props, ...internalProps });
 
-  /**
-   * Update props for our slider state
-   */
-  useLayoutEffect(() => {
-    setState({ ...props, forceDragEnabled: props.dragEnabled });
+  useDidUpdate(() => {
+    set(props);
   }, [props]);
 
-  return [state, setState];
+  return [state, set];
 }
 
 export default usePropsToState;

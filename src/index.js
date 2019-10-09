@@ -1,29 +1,31 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 
 /**
- * Contexts
+ * Context
  */
 import { Provider } from './context';
 
 /**
- * Main 3rd party plugin
+ * Main 3rd party library
  */
 import Interactable from 'react-interactable/noNative';
 
 /**
- * Hooks
+ * Helpers
  */
-import usePreventDragOnTagNames from './hooks/usePreventDragOnTagNames';
-import usePropsToState from './hooks/usePropsToState';
-import useSlider from './hooks/useSlider';
+import { useDidMount } from './helpers/customHooks';
 
 /**
- * Components
+ * Custom Hooks
  */
+import usePropsToState from './hooks/usePropsToState';
+import useSlider from './hooks/useSlider';
 import Container from './components/Container';
-import SnapPointDebugger from './components/SnapPointDebugger';
 
+/**
+ * Our plugin propTypes
+ */
 ReactInteractableSlider.propTypes = {
   cellAlign: PropTypes.oneOf(['left', 'right']),
   children: PropTypes.node.isRequired,
@@ -39,8 +41,12 @@ ReactInteractableSlider.propTypes = {
   widthPerSlide: PropTypes.number
 };
 
+/**
+ * Default props for our plugin's config
+ */
 ReactInteractableSlider.defaultProps = {
   cellAlign: 'left',
+  customArrows: null,
   dragEnabled: true,
   debug: false,
   fullWidthPerSlide: false,
@@ -54,42 +60,27 @@ function ReactInteractableSlider(props) {
   if (!children) return null;
 
   const interactableRef = useRef();
+  const [state, setState] = usePropsToState(props);
 
-  // Convert and setup state from props
-  const propsToState = usePropsToState(props);
+  const { dragEnabled, snapPoints } = state;
 
-  // Build the slider
-  const [render] = useSlider(propsToState, interactableRef);
+  useDidMount(() => {
+    setState({ view: interactableRef });
+  });
 
-  // Get required state for our Interactable.View
-  const { dragEnabled, snapPoints } = propsToState[0];
-
-  const onSnap = useCallback(
-    snapPoint => propsToState[1]({ currentSnapPoint: snapPoint.index }),
-    []
-  );
-
-  const onDrag = useCallback(e => {
-    const x = Math.floor(Math.abs(e.x));
-    if (e.state === 'end' && x > 0) propsToState[1]({ dragEnabled: true, scrollable: true });
-  }, []);
-
-  usePreventDragOnTagNames(['a', 'img']);
+  const [render] = useSlider([state, setState]);
 
   return (
-    <Provider value={propsToState}>
+    <Provider value={[state, setState]}>
       <Container>
         <Interactable.View
           horizontalOnly
           dragEnabled={dragEnabled}
           ref={interactableRef}
           snapPoints={snapPoints}
-          onSnap={onSnap}
-          onDrag={onDrag}
         >
-          {render(children)}
+          {render}
         </Interactable.View>
-        <SnapPointDebugger />
       </Container>
     </Provider>
   );
