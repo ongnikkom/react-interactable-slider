@@ -1,4 +1,4 @@
-import { useMergeState, useDidUpdate } from '../helpers/customHooks';
+import { useMergeState, useDidUpdate } from 'react-hooks-lib';
 
 const internalProps = {
   currentSnapPoint: 0,

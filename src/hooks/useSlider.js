@@ -1,5 +1,5 @@
 import React, { Children, cloneElement, useCallback, useLayoutEffect, useMemo } from 'react';
-import { useDidUpdate } from '../helpers/customHooks';
+import { useDidUpdate } from 'react-hooks-lib';
 import getSliderPortPropsByIndex from '../helpers/getSliderPortPropsByIndex';
 import getSnapPoints from '../helpers/getSnapPoints';
 import SlidePort from '../components/SlidePort';

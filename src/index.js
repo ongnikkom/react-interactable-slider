@@ -1,4 +1,5 @@
 import React, { useCallback, useRef } from 'react';
+import { useDidMount } from 'react-hooks-lib';
 import PropTypes from 'prop-types';
 
 /**
@@ -10,11 +11,6 @@ import { Provider } from './context';
  * Main 3rd party library
  */
 import Interactable from 'react-interactable/noNative';
-
-/**
- * Helpers
- */
-import { useDidMount } from './helpers/customHooks';
 
 /**
  * Custom Hooks

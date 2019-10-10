@@ -1,6 +1,6 @@
 import React, { useContext, useMemo, useRef } from 'react';
+import { useDidUpdate } from 'react-hooks-lib';
 import { container, containerInner } from './styles';
-import { useDidUpdate } from '../../helpers/customHooks';
 import useDimensions from '../../hooks/useDimensions';
 import Context from '../../context';
 import Navigation from '../Navigation';
