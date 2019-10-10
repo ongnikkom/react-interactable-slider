@@ -1,19 +1,21 @@
-import React, { useContext } from 'react';
-import { container, point } from './styles';
+import React, { useContext, useMemo } from 'react';
 import Context from '../../context';
+import { container, point } from './styles';
 
 function SnapPointDebugger() {
   const [state] = useContext(Context);
   const { debug, snapPoints } = state;
 
-  if (snapPoints.length < 1 || !debug) return null;
-
-  return (
-    <div className={container}>
-      {snapPoints.map(({ x }, i) => (
-        <div className={point} key={i} style={{ left: x }} />
-      ))}
-    </div>
+  return useMemo(
+    () =>
+      snapPoints.length > 0 && (
+        <div className={container}>
+          {snapPoints.map(({ x }, i) => (
+            <div className={point} key={i} style={{ left: x }} />
+          ))}
+        </div>
+      ),
+    [debug, snapPoints]
   );
 }
 

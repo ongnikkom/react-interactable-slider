@@ -10,6 +10,7 @@ function useSlider([state, setState]) {
   const {
     cellAlign,
     children,
+    debug,
     dragEnabled,
     marginGapsPerSlide,
     fullWidthPerSlide,
@@ -101,7 +102,14 @@ function useSlider([state, setState]) {
         }
       });
     });
-  }, [cellAlign, Children.count(children), marginGapsPerSlide, fullWidthPerSlide, widthPerSlide]);
+  }, [
+    cellAlign,
+    Children.count(children),
+    debug,
+    marginGapsPerSlide,
+    fullWidthPerSlide,
+    widthPerSlide
+  ]);
 
   return [render];
 }

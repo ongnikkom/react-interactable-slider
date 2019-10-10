@@ -21,7 +21,12 @@ import { useDidMount } from './helpers/customHooks';
  */
 import usePropsToState from './hooks/usePropsToState';
 import useSlider from './hooks/useSlider';
+
+/**
+ * Components
+ */
 import Container from './components/Container';
+import SnapPointDebugger from './components/SnapPointDebugger';
 
 /**
  * Our plugin propTypes
@@ -88,6 +93,7 @@ function ReactInteractableSlider(props) {
         >
           {render}
         </Interactable.View>
+        <SnapPointDebugger />
       </Container>
     </Provider>
   );
