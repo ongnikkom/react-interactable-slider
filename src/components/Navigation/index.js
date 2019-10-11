@@ -4,7 +4,9 @@ import { arrow, dotsContainer, dot } from './styles';
 import Arrow from './components/Arrow';
 
 function Navigation() {
-  const [state] = useContext(Context);
+  const {
+    propsToState: [state]
+  } = useContext(Context);
 
   const { cellAlign, currentSnapPoint, customArrows, navigationType, snapPoints, view } = state;
 

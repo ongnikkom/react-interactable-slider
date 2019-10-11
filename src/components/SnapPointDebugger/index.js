@@ -3,7 +3,10 @@ import Context from '../../context';
 import { container, point } from './styles';
 
 function SnapPointDebugger() {
-  const [state] = useContext(Context);
+  const {
+    propsToState: [state]
+  } = useContext(Context);
+
   const { debug, snapPoints } = state;
 
   return useMemo(

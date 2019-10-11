@@ -2,10 +2,7 @@ import { useMergeState, useDidUpdate } from 'react-hooks-lib';
 
 const internalProps = {
   currentSnapPoint: 0,
-  events: {
-    isDragging: false,
-    scrollable: true
-  },
+  isDragging: false,
   responsive: true,
   sliderWidth: 800,
   slides: [],

@@ -77,12 +77,27 @@ function ReactInteractableSlider(props) {
    */
   const onSnap = useCallback(({ index }) => setState({ currentSnapPoint: index }), []);
 
+  const onDrag = useCallback(e => {
+    // console.log(e);
+  });
+
+  /**
+   * Create an object for our propsToState and userProps
+   * so we can able to check difference easily
+   */
+  const providerValue = {
+    propsToState: [state, setState],
+    userProps: props
+  };
+
   return (
-    <Provider value={[state, setState]}>
+    <Provider value={providerValue}>
       <Container>
         <Interactable.View
+          animatedNativeDriver
           horizontalOnly
           dragEnabled={dragEnabled}
+          onDrag={onDrag}
           onSnap={onSnap}
           ref={interactableRef}
           snapPoints={snapPoints}

@@ -17,12 +17,15 @@ function getSnapPoints(props) {
   const isLeft = cellAlign === 'left';
 
   // The snapPoint will always start at 0 for ltr and rtl
-  const snapPoints = [{ x: 0, damping: 0.62 }];
+  const snapPoints = [{ x: 0 }];
 
   // Margin gaps will be the in-between gaps of the slides
   const marginGaps = marginGapsPerSlide * 2;
 
   const elements = slides;
+
+  // Change the amount of damping on the spring connected to the poing
+  const damping = fullWidthPerSlide ? 0.62 : 0.7;
 
   /**
    * Check the visible elements inside the slider container.
@@ -45,8 +48,7 @@ function getSnapPoints(props) {
     widthPerSlide
   );
 
-  if (!fullWidthPerSlide)
-    snapPoints.push({ x: isLeft ? -initialSnapPoint : initialSnapPoint, damping: 0.62 });
+  if (!fullWidthPerSlide) snapPoints.push({ x: isLeft ? -initialSnapPoint : initialSnapPoint });
 
   /**
    * See getLastSnapPoint.js
@@ -73,11 +75,11 @@ function getSnapPoints(props) {
     if (!fullWidthPerSlide && (lastSnapPoint > 0 && lastSnapPoint > x) && x > 0) {
       x = x + initialSnapPoint;
       if (lastSnapPoint > x) {
-        snapPoints.push({ x: isLeft ? -x : x, damping: 0.62 });
+        snapPoints.push({ damping, x: isLeft ? -x : x });
       }
     } else if (fullWidthPerSlide && x > 0) {
       x = sliderWidth * i;
-      snapPoints.push({ x: isLeft ? -x : x, damping: 0.62 });
+      snapPoints.push({ damping, x: isLeft ? -x : x });
     }
   }
 

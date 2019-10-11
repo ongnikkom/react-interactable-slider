@@ -11,7 +11,6 @@ function useSlider([state, setState]) {
     cellAlign,
     children,
     debug,
-    dragEnabled,
     marginGapsPerSlide,
     fullWidthPerSlide,
     sliderWidth,
@@ -20,6 +19,9 @@ function useSlider([state, setState]) {
     widthPerSlide
   } = state;
 
+  /**
+   * Reset position of the interactable view depending on x position
+   */
   const resetPosition = useCallback((x = 0) => view.current.changePosition({ x, y: 0 }), [view]);
 
   /**
@@ -75,14 +77,6 @@ function useSlider([state, setState]) {
   }, [cellAlign, fullWidthPerSlide, marginGapsPerSlide, sliderWidth, widthPerSlide]);
 
   /**
-   * This will ensure that dragEnabled will only be true
-   * if we have snapPoints
-   */
-  useDidUpdate(() => {
-    setState({ dragEnabled: snapPoints.length > 0 });
-  }, [dragEnabled]);
-
-  /**
    * We need to create a Port Component so we can set the
    * width and margins of each slide. Because, we cannot directly
    * set these properties from the props.children especially
@@ -90,7 +84,6 @@ function useSlider([state, setState]) {
    * regular DOM.
    */
   const render = useMemo(() => {
-    console.log('Render children re-rendered');
     const count = Children.count(children);
     return Children.map(children, (child, i) => {
       const slidePortProps = getSliderPortPropsByIndex(state, i, count);
@@ -108,6 +101,7 @@ function useSlider([state, setState]) {
     debug,
     marginGapsPerSlide,
     fullWidthPerSlide,
+    sliderWidth,
     widthPerSlide
   ]);
 

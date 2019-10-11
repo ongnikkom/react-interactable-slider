@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import useEventListener from './useEventListener';
+import usePreventEvtOutside from './usePreventEvtOutside';
 
 const elementsToPrevent = ['a', 'img'];
 
@@ -10,17 +10,15 @@ const elementsToPrevent = ['a', 'img'];
  * @param {*} ref
  */
 function usePreventDragConflicts(ref) {
-  const handleDragInside = useCallback(
+  const handler = useCallback(
     e => {
       const { target } = e;
-      if (ref.current && ref.current.contains(target)) {
-        elementsToPrevent.indexOf(target.tagName.toLowerCase()) && e.preventDefault();
-      }
+      elementsToPrevent.indexOf(target.tagName.toLowerCase()) > -1 && e.preventDefault();
     },
     [ref]
   );
 
-  useEventListener('dragstart', handleDragInside);
+  usePreventEvtOutside(ref.current, 'dragstart', handler);
 }
 
 export default usePreventDragConflicts;
