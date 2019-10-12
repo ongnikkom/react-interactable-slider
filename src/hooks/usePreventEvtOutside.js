@@ -4,13 +4,9 @@ import useEventListener from './useEventListener';
 function usePreventEvtOuside(element, evtName, cb) {
   const savedHandler = useRef();
 
-  useEffect(
-    () => {
-      savedHandler.current = cb;
-    },
-    [cb],
-    element
-  );
+  useEffect(() => {
+    savedHandler.current = cb;
+  }, [cb, element]);
 
   const handler = useCallback(
     e => {
