@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import Hammer from 'hammerjs';
-import { useDidMount, useDidUpdate } from 'react-hooks-lib';
+import { useDidUpdate } from 'react-hooks-lib';
 import { container, containerInner } from './styles';
 import useDimensions from '../../hooks/useDimensions';
 import Context from '../../context';
@@ -17,7 +17,17 @@ function Container({ children }) {
 
   const containerRef = useRef();
 
-  const { cellAlign, debug, fullWidthPerSlide, responsive, sliderWidth, snapPoints } = state;
+  const {
+    cellAlign,
+    debug,
+    isDragging,
+    isPannedVertically,
+    isPannedHorizontally,
+    fullWidthPerSlide,
+    responsive,
+    sliderWidth,
+    snapPoints
+  } = state;
 
   const direction = cellAlign === 'left' ? 'ltr' : 'rtl';
 
@@ -43,8 +53,55 @@ function Container({ children }) {
    * 1. When user starts dragging the slider the scroll should be disabled
    * 2. When user starts scrolling the dragging of the slider should be disabled
    */
-  useEventListener('scroll', () => setState({ dragEnabled: false }));
-  usePreventEvtOuside(el, 'touchstart', () => setState({ dragEnabled: canDrag }));
+  usePreventEvtOuside(el, 'touchstart', () => setState({ isDragging: true }));
+
+  useEventListener(
+    'touchmove',
+    e => {
+      e.stopImmediatePropagation();
+      if ((isDragging && !isPannedVertically) || (isDragging && isPannedHorizontally)) {
+        e.preventDefault();
+      } else {
+        return true;
+      }
+    },
+    window,
+    { passive: false }
+  );
+
+  useEventListener('touchend', () =>
+    setState({ isDragging: false, dragEnabled: canDrag, isPannedVertically: false })
+  );
+
+  /**
+   * Handler for our hammerjs
+   * @param {*} e
+   */
+  const handler = e => {
+    const angle = Math.floor(e.angle);
+
+    if (angle >= 60 && angle <= 140) {
+      setState({ isPannedVertically: true, dragEnabled: false });
+      return;
+    } else if (angle <= -60 && angle >= -140) {
+      setState({ isPannedVertically: true, dragEnabled: false });
+      return;
+    }
+  };
+
+  /**
+   * Create touch action using hammerjs
+   */
+  useEffect(() => {
+    if (!el) return;
+
+    const mc = new Hammer(el, {
+      touchAction: 'pan-y',
+      recognizers: [[Hammer.Pan, { direction: Hammer.DIRECTION_VERTICAL }]]
+    });
+
+    mc.on('panstart', handler);
+  }, [el]);
 
   /**
    * We wrap it using useDidUpdate because we want to get

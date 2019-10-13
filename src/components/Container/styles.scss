@@ -28,7 +28,7 @@
 
     > div:first-child {
       flex: auto;
-      touch-action: pan-y;
+      touch-action: pan-y !important;
 
       &:before {
         content: '';

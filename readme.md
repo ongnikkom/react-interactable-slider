@@ -25,8 +25,8 @@ cellAlign={'left'}
  * Provide custom React Element for your arrows
  * It will wrap your component to a div with a class of
  * custom-left-arrrow and custom-right-arrow. Also, the
- * custom arrow will receive disabledArrow props so you
- * can handle css properly.
+ * custom arrow will receive disabled and navigationType props
+ * so you can handle css properly.
  * Make sure navigationType is set to arrows or both and it
  * will automatically show when slides exceeds the container width
  * @param {Element}

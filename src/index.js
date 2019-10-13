@@ -78,7 +78,7 @@ function ReactInteractableSlider(props) {
   const onSnap = useCallback(({ index }) => setState({ currentSnapPoint: index }), []);
 
   const onDrag = useCallback(e => {
-    // console.log(e);
+    setState({ isPannedHorizontally: e.state === 'start' });
   });
 
   /**
