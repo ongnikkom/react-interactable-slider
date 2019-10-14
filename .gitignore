@@ -17,3 +17,5 @@
 # Visual Studio Code Patch
 # Ignore all local history of files
 .history
+
+coverage

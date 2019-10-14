@@ -11,8 +11,8 @@
   "license": "MIT",
   "dependencies": {
     "classnames": "^2.2.6",
-    "react": "file../node_modules/react",
-    "react-dom": "file../node_modules/react-dom"
+    "react": "../node_modules/react",
+    "react-dom": "../node_modules/react-dom"
   },
   "devDependencies": {
     "@babel/cli": "^7.6.0",
