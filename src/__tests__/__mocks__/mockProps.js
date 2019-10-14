@@ -1,5 +1,5 @@
 // Picked from `usePropsToState.js`
-export const internalProps = {
+export const mockInternalProps = {
   currentSnapPoint: 0,
   isDragging: false,
   isPannedVertically: false,
@@ -11,7 +11,7 @@ export const internalProps = {
 }
 
 // Picked from `example/src/App.js`
-export const mockProps = {
+export const mockComponentProps = {
   cellAlign: 'left',
   debug: true,
   dragEnabled: true,
