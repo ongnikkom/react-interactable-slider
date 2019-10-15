@@ -4,7 +4,7 @@ import getSliderPortPropsByIndex from '../helpers/getSliderPortPropsByIndex';
 import getSnapPoints from '../helpers/getSnapPoints';
 import SlidePort from '../components/SlidePort';
 
-function useSlider([state, setState]) {
+function useSlider([state, setState] = []) {
   let nodes = [];
 
   const {
