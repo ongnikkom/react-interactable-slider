@@ -14,7 +14,7 @@
   ],
   "main": "dist/index.js",
   "scripts": {
-    "test": "jest --colors",
+    "test": "jest --clearCache && jest --colors --runInBand",
     "start": "webpack --watch --mode none",
     "build": "webpack --mode production",
     "deploy": "gh-pages -d example/dist"
