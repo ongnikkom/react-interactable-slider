@@ -16,7 +16,7 @@ function usePreventEvtOuside(element, evtName, cb) {
     [cb, element]
   );
 
-  useEventListener(evtName, handler);
+  useEventListener(evtName, handler, window, { passive: false });
 }
 
 export default usePreventEvtOuside;

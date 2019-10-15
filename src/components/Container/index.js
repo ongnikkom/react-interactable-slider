@@ -1,5 +1,5 @@
-import React, { useEffect, useCallback, useContext, useMemo, useRef, useState } from 'react';
-import Hammer from 'hammerjs';
+import React, { useContext, useMemo, useRef } from 'react';
+import ZingTouch from 'zingtouch';
 import { useDidUpdate } from 'react-hooks-lib';
 import { container, containerInner } from './styles';
 import useDimensions from '../../hooks/useDimensions';
@@ -9,6 +9,11 @@ import usePreventDragConflicts from '../../hooks/usePreventDragConflicts';
 import usePreventEvtOuside from '../../hooks/usePreventEvtOutside';
 import useEventListener from '../../hooks/useEventListener';
 
+let interactionStart,
+  panStarted = false,
+  threshold = 4,
+  pannedDirection = null;
+
 function Container({ children }) {
   const {
     propsToState: [state, setState],
@@ -17,17 +22,7 @@ function Container({ children }) {
 
   const containerRef = useRef();
 
-  const {
-    cellAlign,
-    debug,
-    isDragging,
-    isPannedVertically,
-    isPannedHorizontally,
-    fullWidthPerSlide,
-    responsive,
-    sliderWidth,
-    snapPoints
-  } = state;
+  const { cellAlign, debug, fullWidthPerSlide, responsive, sliderWidth, snapPoints } = state;
 
   const direction = cellAlign === 'left' ? 'ltr' : 'rtl';
 
@@ -53,54 +48,62 @@ function Container({ children }) {
    * 1. When user starts dragging the slider the scroll should be disabled
    * 2. When user starts scrolling the dragging of the slider should be disabled
    */
-  usePreventEvtOuside(el, 'touchstart', () => setState({ isDragging: true }));
+  usePreventEvtOuside(el, 'touchstart', e => {
+    setState({ dragEnabled: false });
+    panStarted = true;
+    interactionStart = +new Date();
+  });
 
+  useEventListener('touchend', () => {
+    pannedDirection = null;
+    panStarted = false;
+    interactionStart = null;
+  });
+
+  // Disable touch scroll depending below condition
   useEventListener(
     'touchmove',
     e => {
-      e.stopImmediatePropagation();
-      if ((isDragging && !isPannedVertically) || (isDragging && isPannedHorizontally)) {
-        e.preventDefault();
-      } else {
-        return true;
+      if (interactionStart) {
+        const delta = +new Date() - interactionStart;
+        if (delta > threshold) {
+          if (pannedDirection === 'right' || pannedDirection === 'left') {
+            e.preventDefault();
+            setState({ dragEnabled: canDrag });
+          }
+        }
       }
     },
     window,
     { passive: false }
   );
 
-  useEventListener('touchend', () =>
-    setState({ isDragging: false, dragEnabled: canDrag, isPannedVertically: false })
-  );
-
-  /**
-   * Handler for our hammerjs
-   * @param {*} e
-   */
   const handler = e => {
-    const angle = Math.floor(e.angle);
-
-    if (angle >= 60 && angle <= 140) {
-      setState({ isPannedVertically: true, dragEnabled: false });
-      return;
-    } else if (angle <= -60 && angle >= -140) {
-      setState({ isPannedVertically: true, dragEnabled: false });
+    if (!panStarted) {
       return;
     }
+
+    let angle = e.detail.data[0].directionFromOrigin;
+
+    if ((angle >= 315 && angle <= 360) || (angle <= 45 && angle >= 0)) {
+      pannedDirection = 'right';
+    } else if (angle >= 135 && angle <= 225) {
+      pannedDirection = 'left';
+    } else if (angle <= 135) {
+      setState({ dragEnabled: false });
+      pannedDirection = 'up';
+    } else {
+      setState({ dragEnabled: false });
+      pannedDirection = 'down';
+    }
+
+    panStarted = false;
   };
 
-  /**
-   * Create touch action using hammerjs
-   */
-  useEffect(() => {
-    if (!el) return;
-
-    const mc = new Hammer(el, {
-      touchAction: 'pan-y',
-      recognizers: [[Hammer.Pan, { direction: Hammer.DIRECTION_VERTICAL }]]
-    });
-
-    mc.on('panstart', handler);
+  useDidUpdate(() => {
+    const region = new ZingTouch.Region(el, true, false);
+    region.bind(el, 'pan', handler);
+    return () => region.unbind(el, 'pan', handler);
   }, [el]);
 
   /**

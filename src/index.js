@@ -77,10 +77,6 @@ function ReactInteractableSlider(props) {
    */
   const onSnap = useCallback(({ index }) => setState({ currentSnapPoint: index }), []);
 
-  const onDrag = useCallback(e => {
-    setState({ isPannedHorizontally: e.state === 'start' });
-  });
-
   /**
    * Create an object for our propsToState and userProps
    * so we can able to check difference easily
@@ -97,7 +93,6 @@ function ReactInteractableSlider(props) {
           animatedNativeDriver
           horizontalOnly
           dragEnabled={dragEnabled}
-          onDrag={onDrag}
           onSnap={onSnap}
           ref={interactableRef}
           snapPoints={snapPoints}

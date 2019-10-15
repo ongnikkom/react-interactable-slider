@@ -36,7 +36,8 @@
     "react-dom": "^16.9.0",
     "react-hooks-lib": "0.0.20",
     "react-interactable": "^0.6.4",
-    "react-panresponder-web": "^1.0.2"
+    "react-panresponder-web": "^1.0.2",
+    "zingtouch": "^1.0.6"
   },
   "devDependencies": {
     "@babel/cli": "^7.6.0",
