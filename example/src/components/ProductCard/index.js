@@ -21,7 +21,7 @@ function ProductCard({ fullWidthPerSlide }) {
   }, [ref, fullWidthPerSlide]);
 
   return (
-    <div ref={ref} className={productCard}>
+    <div ref={ref} className={productCard} data-testid='slide'>
       <a href="https://google.com">
         <img src={imgSrc} />
       </a>

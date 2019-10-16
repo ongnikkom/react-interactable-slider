@@ -116,7 +116,7 @@ function Container({ children }) {
   }, [dimensions, fullWidthPerSlide]);
 
   return (
-    <div ref={ref} style={{ width: memoizedWidth }} className={containerClass} dir={direction}>
+    <div ref={ref} style={{ width: memoizedWidth }} className={containerClass} dir={direction} data-testid='carousel-container'>
       <div ref={containerRef} className={containerInnerClass}>
         {children}
       </div>

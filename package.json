@@ -17,7 +17,12 @@
     "test": "jest --clearCache && jest --colors --runInBand",
     "start": "webpack --watch --mode none",
     "build": "webpack --mode production",
-    "deploy": "gh-pages -d example/dist"
+    "deploy": "gh-pages -d example/dist",
+    "boot-server": "cd example && npm start",
+    "cy:open":"cypress open",
+    "cy:run":"cypress run",
+    "int:test:open": "start-server-and-test boot-server http-get://0.0.0.0:3001 cy:open",
+    "int:test:run": "start-server-and-test boot-server http-get://0.0.0.0:3001 cy:run"
   },
   "author": "Nikko Ong",
   "license": "MIT",
@@ -54,6 +59,7 @@
     "autoprefixer": "^9.6.1",
     "babel-loader": "^8.0.6",
     "css-loader": "^3.2.0",
+    "cypress": "^3.4.1",
     "gh-pages": "^2.1.1",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^24.9.0",

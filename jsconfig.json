@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "rootDir": "src",
+    "baseUrl": "src"
+  },
+  "include": [
+    "node_modules/cypress",
+    "example/**/*.js",
+    "cypress/**/*.js",
+    "src/**/*.js"
+  ],
+  "exclude": ["node_modules/{**,!(cypress)}/**"]
+}

@@ -18,4 +18,6 @@
 # Ignore all local history of files
 .history
 
+# Test files
 coverage
+cypress/fixtures/example.json

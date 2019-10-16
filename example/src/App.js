@@ -11,7 +11,7 @@ import ProductCard from './components/ProductCard';
 function App() {
   const slider = useMergeState({
     cellAlign: 'left',
-    debug: true,
+    debug: false,
     dragEnabled: true,
     fullWidthPerSlide: false,
     marginGapsPerSlide: 4,
