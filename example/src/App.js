@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
-import useMergeState from './hooks/useMergeState';
+import React, { useState } from "react";
+import useMergeState from "./hooks/useMergeState";
 
-import ReactInteractableSlider from '../../dist';
-import Debugger from './components/Debugger';
+import ReactInteractableSlider from "../../dist";
+import Debugger from "./components/Debugger";
 
-import LeftArrow from './components/Arrows/LeftArrow';
-import RightArrow from './components/Arrows/RightArrow';
-import ProductCard from './components/ProductCard';
+import LeftArrow from "./components/Arrows/LeftArrow";
+import RightArrow from "./components/Arrows/RightArrow";
+import ProductCard from "./components/ProductCard";
 
 function App() {
   const slider = useMergeState({
-    cellAlign: 'left',
+    cellAlign: "left",
     debug: false,
     dragEnabled: true,
     fullWidthPerSlide: false,
     marginGapsPerSlide: 4,
-    navigationType: 'both',
+    navigationType: "both",
     widthPerSlide: 180
   });
 
@@ -44,16 +44,18 @@ function App() {
 
   return (
     <>
-      <button onClick={addSlide}>Add Slide</button>{' '}
-      <button onClick={removeSlide}>RemoveSlide</button>
+      <button onClick={addSlide}>Add Slide</button>{" "}
+      <button onClick={removeSlide} data-testid="btn-remove-slide">
+        Remove Slide
+      </button>
       <br />
       <br />
-      <button onClick={incrementCount}>Increment Count</button>{' '}
+      <button onClick={incrementCount}>Increment Count</button>{" "}
       <button onClick={toggleCustomArrows}>Toggle Custom Arrows</button>
       <div>&nbsp;</div>
       <div>
-        Increment count (Making sure that the slider doesn't go back to slide 1 when state from the
-        parent component changes): <b>{count}</b>
+        Increment count (Making sure that the slider doesn't go back to slide 1
+        when state from the parent component changes): <b>{count}</b>
       </div>
       <div>&nbsp;</div>
       <ReactInteractableSlider {...slider[0]}>

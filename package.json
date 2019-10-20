@@ -19,8 +19,8 @@
     "build": "webpack --mode production",
     "deploy": "gh-pages -d example/dist",
     "boot-server": "cd example && npm start",
-    "cy:open":"cypress open",
-    "cy:run":"cypress run",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
     "int:test:open": "start-server-and-test boot-server http-get://0.0.0.0:3001 cy:open",
     "int:test:run": "start-server-and-test boot-server http-get://0.0.0.0:3001 cy:run"
   },
