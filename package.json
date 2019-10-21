@@ -25,6 +25,9 @@
     "int:test:run": "start-server-and-test boot-server http-get://0.0.0.0:3001 cy:run"
   },
   "author": "Nikko Ong",
+  "contributors": [
+    "Amaan Kulshreshtha <amaan.kulshreshtha@gmail.com>"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
