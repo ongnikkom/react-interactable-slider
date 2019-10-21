@@ -1,6 +1,11 @@
 # .npmignore
-src
-example
-.babelrc
 .gitignore
+src
+cypress
+example
+babel.config.js
+cypress.json
 webpack.config.js
+jest.config.js
+jsconfig.json
+tests

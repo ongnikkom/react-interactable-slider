@@ -1,13 +1,13 @@
-import React, { useContext, useMemo, useRef } from 'react';
-import ZingTouch from 'zingtouch';
-import { useDidUpdate } from 'react-hooks-lib';
-import { container, containerInner } from './styles';
-import useDimensions from '../../hooks/useDimensions';
-import Context from '../../context';
-import Navigation from '../Navigation';
-import usePreventDragConflicts from '../../hooks/usePreventDragConflicts';
-import usePreventEvtOuside from '../../hooks/usePreventEvtOutside';
-import useEventListener from '../../hooks/useEventListener';
+import React, { useContext, useMemo, useRef } from "react";
+import ZingTouch from "zingtouch";
+import { useDidUpdate } from "react-hooks-lib";
+import { container, containerInner } from "./styles";
+import useDimensions from "../../hooks/useDimensions";
+import Context from "../../context";
+import Navigation from "../Navigation";
+import usePreventDragConflicts from "../../hooks/usePreventDragConflicts";
+import usePreventEvtOuside from "../../hooks/usePreventEvtOutside";
+import useEventListener from "../../hooks/useEventListener";
 
 let interactionStart,
   panStarted = false,
@@ -22,15 +22,28 @@ function Container({ children }) {
 
   const containerRef = useRef();
 
-  const { cellAlign, debug, fullWidthPerSlide, responsive, sliderWidth, snapPoints } = state;
+  const {
+    cellAlign,
+    isDragging,
+    debug,
+    fullWidthPerSlide,
+    responsive,
+    sliderWidth,
+    snapPoints
+  } = state;
 
-  const direction = cellAlign === 'left' ? 'ltr' : 'rtl';
+  const direction = cellAlign === "left" ? "ltr" : "rtl";
 
   const containerClass = useMemo(() => container(state), [debug]);
-  const containerInnerClass = useMemo(() => containerInner(state), [cellAlign, debug, snapPoints]);
-  const memoizedWidth = useMemo(() => (!responsive ? parseInt(sliderWidth) : '100%'), [
-    sliderWidth
+  const containerInnerClass = useMemo(() => containerInner(state), [
+    cellAlign,
+    debug,
+    snapPoints
   ]);
+  const memoizedWidth = useMemo(
+    () => (!responsive ? parseInt(sliderWidth) : "100%"),
+    [sliderWidth]
+  );
 
   const [ref, dimensions] = useDimensions(responsive);
 
@@ -43,18 +56,21 @@ function Container({ children }) {
   // depending on the config of the user
   const canDrag = userProps.dragEnabled && snapPoints.length > 0;
 
+  // prevent click if user is still dragging
+  useEventListener("click", e => isDragging && e.preventDefault(), el);
+
   /**
    * Creating mobile touch behavior
    * 1. When user starts dragging the slider the scroll should be disabled
    * 2. When user starts scrolling the dragging of the slider should be disabled
    */
-  usePreventEvtOuside(el, 'touchstart', e => {
+  usePreventEvtOuside(el, "touchstart", e => {
     setState({ dragEnabled: false });
     panStarted = true;
     interactionStart = +new Date();
   });
 
-  useEventListener('touchend', () => {
+  useEventListener("touchend", () => {
     pannedDirection = null;
     panStarted = false;
     interactionStart = null;
@@ -62,12 +78,12 @@ function Container({ children }) {
 
   // Disable touch scroll depending below condition
   useEventListener(
-    'touchmove',
+    "touchmove",
     e => {
       if (interactionStart) {
         const delta = +new Date() - interactionStart;
         if (delta > threshold) {
-          if (pannedDirection === 'right' || pannedDirection === 'left') {
+          if (pannedDirection === "right" || pannedDirection === "left") {
             e.preventDefault();
             setState({ dragEnabled: canDrag });
           }
@@ -86,15 +102,15 @@ function Container({ children }) {
     let angle = e.detail.data[0].directionFromOrigin;
 
     if ((angle >= 315 && angle <= 360) || (angle <= 45 && angle >= 0)) {
-      pannedDirection = 'right';
+      pannedDirection = "right";
     } else if (angle >= 135 && angle <= 225) {
-      pannedDirection = 'left';
+      pannedDirection = "left";
     } else if (angle <= 135) {
       setState({ dragEnabled: false });
-      pannedDirection = 'up';
+      pannedDirection = "up";
     } else {
       setState({ dragEnabled: false });
-      pannedDirection = 'down';
+      pannedDirection = "down";
     }
 
     panStarted = false;
@@ -102,8 +118,8 @@ function Container({ children }) {
 
   useDidUpdate(() => {
     const region = new ZingTouch.Region(el, true, false);
-    region.bind(el, 'pan', handler);
-    return () => region.unbind(el, 'pan', handler);
+    region.bind(el, "pan", handler);
+    return () => region.unbind(el, "pan", handler);
   }, [el]);
 
   /**
@@ -116,7 +132,13 @@ function Container({ children }) {
   }, [dimensions, fullWidthPerSlide]);
 
   return (
-    <div ref={ref} style={{ width: memoizedWidth }} className={containerClass} dir={direction} data-testid='carousel-container'>
+    <div
+      ref={ref}
+      style={{ width: memoizedWidth }}
+      className={containerClass}
+      dir={direction}
+      data-testid="carousel-container"
+    >
       <div ref={containerRef} className={containerInnerClass}>
         {children}
       </div>
