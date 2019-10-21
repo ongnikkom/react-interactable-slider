@@ -75,14 +75,9 @@ function ReactInteractableSlider(props) {
    * Identify our current snap point so we can build
    * a navigation for the slider.
    */
-  const onSnap = useCallback(
-    ({ index }) => setState({ currentSnapPoint: index }),
-    []
-  );
+  const onSnap = ({ index }) => setState({ currentSnapPoint: index })
 
-  const onDrag = useCallback(({ state }) => {
-    setState({ isDragging: state === "start" });
-  });
+  const onDrag = ({ state }) => setState({ isDragging: state === "start" });
 
   /**
    * Create an object for our propsToState and userProps

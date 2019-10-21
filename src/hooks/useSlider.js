@@ -1,14 +1,13 @@
-import React, {
-  Children,
-  cloneElement,
-  useCallback,
-  useLayoutEffect,
-  useMemo
+import React, { 
+  Children, 
+  useMemo, 
+  useEffect 
 } from "react";
 import { useDidUpdate } from "react-hooks-lib";
 import getSliderPortPropsByIndex from "../helpers/getSliderPortPropsByIndex";
 import getSnapPoints from "../helpers/getSnapPoints";
 import SlidePort from "../components/SlidePort";
+import { resetPosition } from "../helpers/util";
 
 function useSlider([state, setState] = []) {
   let nodes = [];
@@ -27,14 +26,6 @@ function useSlider([state, setState] = []) {
   } = state;
 
   /**
-   * Reset position of the interactable view depending on x position
-   */
-  const resetPosition = useCallback(
-    (x = 0) => view.current.changePosition({ x, y: 0 }),
-    [view]
-  );
-
-  /**
    * Manage the array slides depending on the cell alignment.
    * The idea of the computation is that the snapPoints should
    * be the same for ltr or rtl direction. The only difference
@@ -50,7 +41,7 @@ function useSlider([state, setState] = []) {
    * In case of rtl direction, we want to reverse it so we can have
    * the exact same computation for the ltr direction.
    */
-  useLayoutEffect(() => {
+  useEffect(() => {
     const refs = cellAlign === "left" ? nodes : nodes.slice().reverse();
     setState({ slides: refs });
   }, [
@@ -64,13 +55,11 @@ function useSlider([state, setState] = []) {
   /**
    * Compute the snapPoints to create the slider behavior.
    */
-  const snapPoints = useMemo(() => {
-    return getSnapPoints(state);
-  }, [slides, sliderWidth]);
+  const snapPoints = useMemo(() => getSnapPoints(state), [slides, sliderWidth]);
 
   /**
    * If it doesn't have any snap points or the slides doesn't
-   * overflow to the slider container. In this case, we
+   * overflow from the slider container, we
    * should disable the drag
    *
    * Will run twice on the first render when responsive is false
@@ -81,7 +70,7 @@ function useSlider([state, setState] = []) {
    * - Same 2 steps from above
    * - The sliderWidth from the resize event
    */
-  useLayoutEffect(() => {
+  useEffect(() => {
     setState({ snapPoints, dragEnabled: snapPoints.length > 0 });
   }, [snapPoints]);
 
@@ -89,7 +78,7 @@ function useSlider([state, setState] = []) {
    * Reset the position in case the following properties changed
    */
   useDidUpdate(() => {
-    resetPosition();
+    resetPosition(view);
   }, [
     cellAlign,
     fullWidthPerSlide,
@@ -99,13 +88,15 @@ function useSlider([state, setState] = []) {
   ]);
 
   /**
-   * When deleting or removing slide while we are on the last slide
+   * When deleting or removing slide while we are on the last slide,
+   * There should be no extra spaces left after the removal,
+   * And the new last slide should come on the last snappoint
    */
-  useLayoutEffect(() => {
+  useEffect(() => {
     const filteredSnapPoint = snapPoints[currentSnapPoint];
     if (!filteredSnapPoint) {
       const position = snapPoints[currentSnapPoint - 1];
-      if (position) resetPosition(position.x);
+      if (position) resetPosition(view, position.x);
     }
   }, [currentSnapPoint, slides]);
 
@@ -120,13 +111,18 @@ function useSlider([state, setState] = []) {
     const count = Children.count(children);
     return Children.map(children, (child, i) => {
       const slidePortProps = getSliderPortPropsByIndex(state, i, count);
-      return cloneElement(<SlidePort {...slidePortProps}>{child}</SlidePort>, {
-        ref: node => {
-          nodes = [...nodes, node];
-          const { ref } = child;
-          if (typeof ref === "function") ref(node);
-        }
-      });
+      return (
+        <SlidePort
+          ref={slidePortNodeRef => {
+            nodes = [...nodes, slidePortNodeRef];
+            const { ref } = child;
+            if (typeof ref === "function") ref(slidePortNodeRef);
+          }}
+          {...slidePortProps}
+        >
+          {child}
+        </SlidePort>
+      );
     });
   }, [
     cellAlign,

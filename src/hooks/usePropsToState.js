@@ -4,7 +4,6 @@ const internalProps = {
   currentSnapPoint: 0,
   isDragging: false,
   responsive: true,
-  sliderWidth: 800,
   slides: [],
   snapPoints: []
 };
