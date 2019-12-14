@@ -1,12 +1,12 @@
-import React, { cloneElement, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import Context from '../../context';
+import React, { cloneElement, useCallback, useMemo } from 'react';
+import useAppContext from '../../context';
 import { arrow, dotsContainer, dot } from './styles';
 import Arrow from './components/Arrow';
 
 function Navigation() {
   const {
-    propsToState: [state]
-  } = useContext(Context);
+    propsToState: [state],
+  } = useAppContext();
 
   const { cellAlign, currentSnapPoint, customArrows, navigationType, snapPoints, view } = state;
 
@@ -39,12 +39,12 @@ function Navigation() {
     return {
       leftArrow: {
         disabled: leftArrowDisabled,
-        onClick: leftArrowClickHandler
+        onClick: leftArrowClickHandler,
       },
       rightArrow: {
         disabled: rightArrowDisabled,
-        onClick: rightArrowClickHandler
-      }
+        onClick: rightArrowClickHandler,
+      },
     };
   }, [cellAlign, currentSnapPoint, snapPoints]);
 
@@ -59,12 +59,12 @@ function Navigation() {
 
       const clonedLeftArrow = cloneElement(left, {
         navigationType,
-        disabled: leftArrow.disabled
+        disabled: leftArrow.disabled,
       });
 
       const clonedRightArrow = cloneElement(right, {
         navigationType,
-        disabled: rightArrow.disabled
+        disabled: rightArrow.disabled,
       });
 
       return (
