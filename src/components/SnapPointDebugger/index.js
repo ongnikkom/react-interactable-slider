@@ -1,11 +1,11 @@
-import React, { useContext, useMemo } from "react";
-import Context from "../../context";
-import { container, point } from "./styles";
+import React, { useMemo } from 'react';
+import useAppContext from '../../context';
+import { container, point } from './styles';
 
 function SnapPointDebugger() {
   const {
-    propsToState: [state]
-  } = useContext(Context);
+    propsToState: [state],
+  } = useAppContext();
 
   const { debug, snapPoints } = state;
 

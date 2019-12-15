@@ -1,21 +1,14 @@
-import React, { cloneElement, useCallback, useContext, useMemo } from "react";
-import Context from "../../context";
-import { arrow, dotsContainer, dot } from "./styles";
-import Arrow from "./components/Arrow";
+import React, { cloneElement, useCallback, useMemo } from 'react';
+import useAppContext from '../../context';
+import { arrow, dotsContainer, dot } from './styles';
+import Arrow from './components/Arrow';
 
 function Navigation() {
   const {
-    propsToState: [state]
-  } = useContext(Context);
+    propsToState: [state],
+  } = useAppContext();
 
-  const {
-    cellAlign,
-    currentSnapPoint,
-    customArrows,
-    navigationType,
-    snapPoints,
-    view
-  } = state;
+  const { cellAlign, currentSnapPoint, customArrows, navigationType, snapPoints, view } = state;
 
   const snapTo = useCallback(index => view.current.snapTo({ index }), [view]);
 
@@ -27,14 +20,12 @@ function Navigation() {
    * on the cell alignment.
    */
   const getArrowsData = useCallback(() => {
-    const isLeft = cellAlign === "left";
+    const isLeft = cellAlign === 'left';
 
     const navLeft = () =>
-      currentSnapPoint !== snapPoints.length - 1 &&
-      snapTo(currentSnapPoint + 1);
+      currentSnapPoint !== snapPoints.length - 1 && snapTo(currentSnapPoint + 1);
 
-    const navRight = () =>
-      currentSnapPoint !== 0 && snapTo(currentSnapPoint - 1);
+    const navRight = () => currentSnapPoint !== 0 && snapTo(currentSnapPoint - 1);
 
     const leftDisabled = currentSnapPoint === snapPoints.length - 1;
     const rightDisabled = currentSnapPoint < 1;
@@ -48,12 +39,12 @@ function Navigation() {
     return {
       leftArrow: {
         disabled: leftArrowDisabled,
-        onClick: leftArrowClickHandler
+        onClick: leftArrowClickHandler,
       },
       rightArrow: {
         disabled: rightArrowDisabled,
-        onClick: rightArrowClickHandler
-      }
+        onClick: rightArrowClickHandler,
+      },
     };
   }, [cellAlign, currentSnapPoint, snapPoints]);
 
@@ -68,12 +59,12 @@ function Navigation() {
 
       const clonedLeftArrow = cloneElement(left, {
         navigationType,
-        disabled: leftArrow.disabled
+        disabled: leftArrow.disabled,
       });
 
       const clonedRightArrow = cloneElement(right, {
         navigationType,
-        disabled: rightArrow.disabled
+        disabled: rightArrow.disabled,
       });
 
       return (
@@ -88,9 +79,9 @@ function Navigation() {
         </>
       );
     } else {
-      const hasBothNav = navigationType === "both";
-      const leftArrowCx = arrow("left", hasBothNav, leftArrow.disabled);
-      const rightArrowCx = arrow("right", hasBothNav, rightArrow.disabled);
+      const hasBothNav = navigationType === 'both';
+      const leftArrowCx = arrow('left', hasBothNav, leftArrow.disabled);
+      const rightArrowCx = arrow('right', hasBothNav, rightArrow.disabled);
 
       return (
         <>
@@ -107,10 +98,7 @@ function Navigation() {
   const onDotClick = useCallback(
     e => {
       const { target } = e;
-      const index = Array.prototype.indexOf.call(
-        target.parentNode.childNodes,
-        target
-      );
+      const index = Array.prototype.indexOf.call(target.parentNode.childNodes, target);
       if (currentSnapPoint !== index) snapTo(index);
     },
     [currentSnapPoint, view]
@@ -122,13 +110,7 @@ function Navigation() {
     return (
       <div className={dotsContainer(cellAlign)}>
         {snapPoints.map((v, i) => {
-          return (
-            <div
-              className={dot(i === selectedDot)}
-              key={i}
-              onClick={onDotClick}
-            />
-          );
+          return <div className={dot(i === selectedDot)} key={i} onClick={onDotClick} />;
         })}
       </div>
     );
@@ -143,7 +125,7 @@ function Navigation() {
           {createArrows()}
           {createDots()}
         </>
-      )
+      ),
     }),
     [createArrows, createDots]
   );
