@@ -3,6 +3,12 @@ import useAppContext from '../../context';
 import { arrow, dotsContainer, dot } from './styles';
 import Arrow from './components/Arrow';
 
+const arrows = ['left', 'right'];
+function generateArrows(arrowProps, callback) {
+  arrows.forEach(arrow => callback(arrow));
+  return Object.keys(arrowProps).map(side => <Arrow key={side} {...arrowProps[side]} />);
+}
+
 function Navigation() {
   const {
     propsToState: [state],
@@ -37,11 +43,11 @@ function Navigation() {
     const rightArrowDisabled = isLeft ? leftDisabled : rightDisabled;
 
     return {
-      leftArrow: {
+      left: {
         disabled: leftArrowDisabled,
         onClick: leftArrowClickHandler,
       },
-      rightArrow: {
+      right: {
         disabled: rightArrowDisabled,
         onClick: rightArrowClickHandler,
       },
@@ -52,44 +58,24 @@ function Navigation() {
    * Create a default or a custom arrows defined by the user
    */
   const createArrows = useCallback(() => {
-    const { leftArrow, rightArrow } = getArrowsData();
+    const arrowProps = { ...getArrowsData() };
 
-    if (customArrows) {
-      const { left, right } = customArrows;
-
-      const clonedLeftArrow = cloneElement(left, {
-        navigationType,
-        disabled: leftArrow.disabled,
-      });
-
-      const clonedRightArrow = cloneElement(right, {
-        navigationType,
-        disabled: rightArrow.disabled,
-      });
-
-      return (
-        <>
-          <Arrow className="custom-left-arrow" onClick={leftArrow.onClick}>
-            {clonedLeftArrow}
-          </Arrow>
-
-          <Arrow className="custom-right-arrow" onClick={rightArrow.onClick}>
-            {clonedRightArrow}
-          </Arrow>
-        </>
-      );
-    } else {
-      const hasBothNav = navigationType === 'both';
-      const leftArrowCx = arrow('left', hasBothNav, leftArrow.disabled);
-      const rightArrowCx = arrow('right', hasBothNav, rightArrow.disabled);
-
-      return (
-        <>
-          <Arrow className={leftArrowCx} onClick={leftArrow.onClick} />
-          <Arrow className={rightArrowCx} onClick={rightArrow.onClick} />
-        </>
-      );
-    }
+    return customArrows
+      ? generateArrows(arrowProps, side => {
+          const $CustomArrow = customArrows[side];
+          const currArrow = arrowProps[side];
+          if ($CustomArrow) {
+            currArrow.className = `custom-${side}-arrow`;
+            currArrow.children = cloneElement($CustomArrow, {
+              navigationType,
+              disabled: currArrow.disabled,
+            });
+          }
+        })
+      : generateArrows(arrowProps, side => {
+          const currArrow = arrowProps[side];
+          currArrow.className = arrow(side, navigationType === 'both', currArrow.disabled);
+        });
   }, [cellAlign, currentSnapPoint, customArrows, navigationType, snapPoints]);
 
   /**
