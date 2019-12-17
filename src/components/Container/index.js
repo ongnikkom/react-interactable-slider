@@ -27,6 +27,7 @@ function Container({ children }) {
     isDragging,
     debug,
     fullWidthPerSlide,
+    navigationType,
     responsive,
     sliderWidth,
     snapPoints,
@@ -47,9 +48,11 @@ function Container({ children }) {
   // The element for the react native interactable
   const el = containerRef.current && containerRef.current.firstChild;
 
+  const hasSnapPoints = snapPoints.length > 0;
+
   // We want to be able to force the dragEnabled state
   // depending on the config of the user
-  const canDrag = userProps.dragEnabled && snapPoints.length > 0;
+  const canDrag = userProps.dragEnabled && hasSnapPoints;
 
   // prevent click if user is still dragging
   useEventListener('click', e => isDragging && e.preventDefault(), el);
@@ -137,7 +140,9 @@ function Container({ children }) {
       <div ref={containerRef} className={containerInnerClass}>
         {children}
       </div>
-      <Navigation />
+
+      {/* Avoid unnecessary rendering of Navigation */}
+      {hasSnapPoints && navigationType !== 'none' && <Navigation />}
     </div>
   );
 }
