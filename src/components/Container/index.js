@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useCallback } from 'react';
 import ZingTouch from 'zingtouch';
 import { useDidUpdate } from 'react-hooks-lib';
 import { container, containerInner } from './styles';
@@ -37,7 +37,7 @@ function Container({ children }) {
 
   const containerClass = useMemo(() => container(state), [debug]);
   const containerInnerClass = useMemo(() => containerInner(state), [cellAlign, debug, snapPoints]);
-  const memoizedWidth = useMemo(() => (!responsive ? parseInt(sliderWidth) : '100%'), [
+  const memoizedWidth = useMemo(() => ({ width: !responsive ? parseInt(sliderWidth) : '100%' }), [
     sliderWidth,
   ]);
 
@@ -54,6 +54,8 @@ function Container({ children }) {
   // depending on the config of the user
   const canDrag = userProps.dragEnabled && hasSnapPoints;
 
+  const disableDrag = useCallback((dragEnabled = false) => setState({ dragEnabled }), [setState]);
+
   // prevent click if user is still dragging
   useEventListener('click', e => isDragging && e.preventDefault(), el);
 
@@ -63,7 +65,7 @@ function Container({ children }) {
    * 2. When user starts scrolling the dragging of the slider should be disabled
    */
   usePreventEvtOuside(el, 'touchstart', e => {
-    setState({ dragEnabled: false });
+    disableDrag();
     panStarted = true;
     interactionStart = +new Date();
   });
@@ -83,7 +85,7 @@ function Container({ children }) {
         if (delta > threshold) {
           if (pannedDirection === 'right' || pannedDirection === 'left') {
             e.preventDefault();
-            setState({ dragEnabled: canDrag });
+            disableDrag(canDrag);
           }
         }
       }
@@ -92,27 +94,27 @@ function Container({ children }) {
     { passive: false }
   );
 
-  const handler = e => {
-    if (!panStarted) {
-      return;
-    }
+  const handler = useCallback(
+    e => {
+      if (!panStarted) {
+        return;
+      }
 
-    let angle = e.detail.data[0].directionFromOrigin;
+      let angle = e.detail.data[0].directionFromOrigin;
 
-    if ((angle >= 315 && angle <= 360) || (angle <= 45 && angle >= 0)) {
-      pannedDirection = 'right';
-    } else if (angle >= 135 && angle <= 225) {
-      pannedDirection = 'left';
-    } else if (angle <= 135) {
-      setState({ dragEnabled: false });
-      pannedDirection = 'up';
-    } else {
-      setState({ dragEnabled: false });
-      pannedDirection = 'down';
-    }
+      if ((angle >= 315 && angle <= 360) || (angle <= 45 && angle >= 0)) {
+        pannedDirection = 'right';
+      } else if (angle >= 135 && angle <= 225) {
+        pannedDirection = 'left';
+      } else {
+        disableDrag();
+        pannedDirection = angle <= 135 ? 'up' : 'down';
+      }
 
-    panStarted = false;
-  };
+      panStarted = false;
+    },
+    [disableDrag]
+  );
 
   useDidUpdate(() => {
     const region = new ZingTouch.Region(el, true, false);
@@ -132,7 +134,7 @@ function Container({ children }) {
   return (
     <div
       ref={ref}
-      style={{ width: memoizedWidth }}
+      style={memoizedWidth}
       className={containerClass}
       dir={direction}
       data-testid="carousel-container"

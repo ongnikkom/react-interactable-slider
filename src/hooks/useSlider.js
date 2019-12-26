@@ -1,14 +1,8 @@
-import React, {
-  Children,
-  cloneElement,
-  useCallback,
-  useLayoutEffect,
-  useMemo
-} from "react";
-import { useDidUpdate } from "react-hooks-lib";
-import getSliderPortPropsByIndex from "../helpers/getSliderPortPropsByIndex";
-import getSnapPoints from "../helpers/getSnapPoints";
-import SlidePort from "../components/SlidePort";
+import React, { Children, cloneElement, useCallback, useLayoutEffect, useMemo } from 'react';
+import { useDidUpdate } from 'react-hooks-lib';
+import getSliderPortPropsByIndex from '../helpers/getSliderPortPropsByIndex';
+import getSnapPoints from '../helpers/getSnapPoints';
+import SlidePort from '../components/SlidePort';
 
 function useSlider([state, setState] = []) {
   let nodes = [];
@@ -23,16 +17,13 @@ function useSlider([state, setState] = []) {
     sliderWidth,
     slides,
     view,
-    widthPerSlide
+    widthPerSlide,
   } = state;
 
   /**
    * Reset position of the interactable view depending on x position
    */
-  const resetPosition = useCallback(
-    (x = 0) => view.current.changePosition({ x, y: 0 }),
-    [view]
-  );
+  const resetPosition = useCallback((x = 0) => view.current.changePosition({ x, y: 0 }), [view]);
 
   /**
    * Manage the array slides depending on the cell alignment.
@@ -51,15 +42,9 @@ function useSlider([state, setState] = []) {
    * the exact same computation for the ltr direction.
    */
   useLayoutEffect(() => {
-    const refs = cellAlign === "left" ? nodes : nodes.slice().reverse();
+    const refs = cellAlign === 'left' ? nodes : nodes.slice().reverse();
     setState({ slides: refs });
-  }, [
-    cellAlign,
-    Children.count(children),
-    fullWidthPerSlide,
-    marginGapsPerSlide,
-    widthPerSlide
-  ]);
+  }, [cellAlign, Children.count(children), fullWidthPerSlide, marginGapsPerSlide, widthPerSlide]);
 
   /**
    * Compute the snapPoints to create the slider behavior.
@@ -90,13 +75,7 @@ function useSlider([state, setState] = []) {
    */
   useDidUpdate(() => {
     resetPosition();
-  }, [
-    cellAlign,
-    fullWidthPerSlide,
-    marginGapsPerSlide,
-    sliderWidth,
-    widthPerSlide
-  ]);
+  }, [cellAlign, fullWidthPerSlide, marginGapsPerSlide, sliderWidth, widthPerSlide]);
 
   /**
    * When deleting or removing slide while we are on the last slide
@@ -120,12 +99,12 @@ function useSlider([state, setState] = []) {
     const count = Children.count(children);
     return Children.map(children, (child, i) => {
       const slidePortProps = getSliderPortPropsByIndex(state, i, count);
-      return cloneElement(<SlidePort {...slidePortProps}>{child}</SlidePort>, {
+      return cloneElement(<SlidePort style={slidePortProps}>{child}</SlidePort>, {
         ref: node => {
           nodes = [...nodes, node];
           const { ref } = child;
-          if (typeof ref === "function") ref(node);
-        }
+          if (typeof ref === 'function') ref(node);
+        },
       });
     });
   }, [
@@ -135,7 +114,7 @@ function useSlider([state, setState] = []) {
     marginGapsPerSlide,
     fullWidthPerSlide,
     sliderWidth,
-    widthPerSlide
+    widthPerSlide,
   ]);
 
   return [render];

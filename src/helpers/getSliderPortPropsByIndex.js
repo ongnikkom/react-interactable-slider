@@ -9,7 +9,7 @@ function getSliderPortPropsByIndex(
   index,
   length
 ) {
-  if (fullWidthPerSlide) return { width: sliderWidth, margin: 0 };
+  if (fullWidthPerSlide) return { width: sliderWidth };
 
   const gaps = `${marginGapsPerSlide}px`;
   const margins = [`0 ${gaps}`, `0 ${gaps} 0 0`, `0 0 0 ${gaps}`];
