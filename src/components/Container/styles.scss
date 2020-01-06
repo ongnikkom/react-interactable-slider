@@ -28,6 +28,8 @@
 
     > div:first-child {
       flex: auto;
+      flex-shrink: 0; // ie11 fix
+
       // touch-action: pan-y !important;
 
       &:before {
