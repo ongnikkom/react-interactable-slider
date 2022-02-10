@@ -67,7 +67,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^24.9.0",
     "mq-polyfill": "^1.1.8",
-    "node-sass": "^4.12.0",
+    "node-sass": "^7.0.0",
     "postcss-loader": "^3.0.0",
     "postcss-preset-env": "^6.7.0",
     "react-test-renderer": "^16.10.2",
